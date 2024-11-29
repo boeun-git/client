@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');  // mongoose 모듈을 불러옵니다.
-
+const mongoose = require('mongoose');
 const Msg = require('../models/msg');
+
 
 async function addMsg(messageData){
     
@@ -25,6 +25,7 @@ async function addMsg(messageData){
 
 }
 
+
 //chatRoom의 objectId로 검색
 async function getChatRoomMsg(chatRoomId){
     const roomId = new mongoose.Types.ObjectId(chatRoomId);
@@ -32,7 +33,7 @@ async function getChatRoomMsg(chatRoomId){
     console.log('getChatRoomMsg : ', chatRoomId);
 
     try{
-        const msg = await Msg.find({ room_id: roomId });
+        const msg = await Msg.findOne({ room_id: roomId }).sort({ msg_dt: -1 });
 
         if (!msg) {
 
@@ -48,51 +49,50 @@ async function getChatRoomMsg(chatRoomId){
 
     } catch (err) {
 
-        console.error('Error getChatRoomId : ', err); 
+        console.error('Error getChatRoomMsg : ', err); 
         throw err;
 
     }
 
 }
 
-//chatRoom의 objectId로 검색
-//async function checkChatMsg(chatRoomId, userName){
-//    const roomId = new mongoose.Types.ObjectId(chatRoomId);
-//    
-//    console.log('checkChatMsg : ', chatRoomId, userName);
-//
-//    try{
-//        const msg = await Msg.find({
-//            room_id: roomId,
-//            [`receive.${userName}.receive_chk`]: 'N'
-//        });
-//
-//        if (!msg) {
-//
-//            console.log(`checkChatMsg : ${roomId}`);
-//
-//        } else {
-//
-//              console.log('success checkChatMsg : ', msg); 
-//
-//        }
-//
-//        return msg;
-//
-//    } catch (err) {
-//
-//        console.error('Error checkChatMsg : ', err); 
-//        throw err;
-//
-//    }
-//
-//}
 
 //chatRoom의 objectId로 검색
-async function checkChatMsg(chatRoomId, userName){
+async function getChatMsg(chatRoomId){
     const roomId = new mongoose.Types.ObjectId(chatRoomId);
     
-    console.log('checkChatMsg : ', chatRoomId, userName);
+    console.log('getChatMsg : ', chatRoomId);
+
+    try{
+        const msg = await Msg.find({ room_id: roomId }).sort({ msg_dt: -1 });
+
+        if (!msg) {
+
+            console.log(`getChatMsg : ${roomId}`);
+
+        } else {
+
+              console.log('success getChatMsg : ', msg); 
+
+        }
+
+        return msg;
+
+    } catch (err) {
+
+        console.error('Error getChatRoomMsg : ', err); 
+        throw err;
+
+    }
+
+}
+
+
+//chatRoom의 objectId로 검색
+async function checkChatMsgId(chatRoomId, userName){
+    const roomId = new mongoose.Types.ObjectId(chatRoomId);
+    
+    console.log('checkChatMsgId : ', chatRoomId, userName);
 
     try{
         const msg = await Msg.find({
@@ -102,11 +102,11 @@ async function checkChatMsg(chatRoomId, userName){
 
         if (msg.length === 0) {
 
-            console.log(`checkChatMsg : ${roomId}`);
+            console.log(`checkChatMsgId : ${roomId}`);
 
         } else {
 
-            console.log('success checkChatMsg : ', msg); 
+            console.log('success checkChatMsgId : ', msg); 
 
         }
 
@@ -114,11 +114,43 @@ async function checkChatMsg(chatRoomId, userName){
 
     } catch (err) {
 
-        console.error('Error checkChatMsg : ', err); 
+        console.error('Error checkChatMsgId : ', err); 
         throw err;
 
     }
 
 }
 
-module.exports = { addMsg, getChatRoomMsg, checkChatMsg };
+//receive_chk가 N인것만 검색
+async function checkChatMsgUser(userName){
+    const roomId = new mongoose.Types.ObjectId(chatRoomId);
+    
+    console.log('checkChatMsgUser : ', chatRoomId, userName);
+
+    try{
+        const msg = await Msg.find({
+            [`receive.${userName}.receive_chk`]: 'N'
+        });
+
+        if (msg.length === 0) {
+
+            console.log(`checkChatMsgUser : ${roomId}`);
+
+        } else {
+
+            console.log('success checkChatMsgUser : ', msg); 
+
+        }
+
+        return msg;
+
+    } catch (err) {
+
+        console.error('Error checkChatMsgUser : ', err); 
+        throw err;
+
+    }
+
+}
+
+module.exports = { addMsg, getChatRoomMsg, checkChatMsgId, checkChatMsgUser, getChatMsg };
