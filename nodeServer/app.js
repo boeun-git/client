@@ -13,6 +13,8 @@ mongoose.connect(process.env.DB)
 // CORS 설정
 app.use(cors({
     origin: 'http://localhost:3000', 
+    //origin: ['http://localhost:3000', 'http://'], 
+    //origin: '*', 
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
 }));

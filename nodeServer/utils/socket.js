@@ -14,7 +14,8 @@ const httpServer = createServer(app);
 // 웹소켓 서버 설정
 const io = socketIo(httpServer, {
     cors: {
-        origin: "http://localhost:3000",  // 허용하는 클라이언트의 origin 설정
+        // 허용하는 클라이언트의 origin 설정
+        origin: "http://localhost:3000",  
         methods: ['GET', 'POST']
     }
 });
