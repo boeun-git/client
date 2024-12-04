@@ -1,6 +1,10 @@
+// routes/chatRoomRoutes.js
 const express = require('express');
 const router = express.Router();
 const chatRoomController = require('../controllers/chatRoomController');
+const socketController = require('../controllers/socketController');
+// socket.io 인스턴스를 여기서 가져옵니다
+//const { io } = require('../utils/socket');  // io 객체를 가져오는 방식에 따라 수정
 
 // 채팅방 생성 
 router.post('/addChatRoom', async(req, res) => {
@@ -10,7 +14,29 @@ router.post('/addChatRoom', async(req, res) => {
         const data = req.body;
         console.log("data route /addChatRoom \n", data);
 
+        //접속여부확인하기
+        if (! socketController.checkUser(data.chat_user)) {
+            res.status(500).json({data :  "offline"});
+            console.log("error route /addChatRoom : offline", );
+            return;
+        }
+
         const addChatRoom = await chatRoomController.addChatRoom(data);
+
+        const roomId = addChatRoom.data._id.toString();
+        //console.log(roomId);
+
+        if(data.chat_type === 0){
+            //group
+            socketController.groupJoinRoom(roomId, data.chat_user);
+        }else{
+            //1:1
+            socketController.SingleJoinRoom(roomId, data.chat_user);
+        }
+        
+        
+        //io.emit('getSingleJoinRoom', roomId, data.chat_user);  // 클라이언트에게 방 입장을 알림
+
         res.status(200).json({data: addChatRoom});
 
     } catch (error) {
@@ -145,7 +171,14 @@ router.get('/getChatMsg', async (req, res) => {
         const { data } = req.query;
         const chatRoomMsg = await chatRoomController.getChatMsg(data);
 
-        res.status(200).json({ data: chatRoomMsg });
+        //접속여부확인하기
+        // if (! socketController.checkUser(data.chat_user)) {
+        //     res.status(200).json({ data: chatRoomMsg, onoff : "off"});
+        //     console.log("error route /addChatRoom : offline", );
+        //     return;
+        // }        
+
+        res.status(200).json({ data: chatRoomMsg, onoff : "on" });
 
         console.log("data route /chatRoomList \n", data);
         console.log("chatRooms route /chatRoomList \n", chatRoomMsg);
@@ -183,8 +216,58 @@ router.get('/checkChatMsgUser', async (req, res) => {
 });
 
 
-// receiveChk가 N 확인??(userName)
+// receiveChk가 N 확인??(_id)
 router.get('/checkChatMsgId', async (req, res) => {
+
+    try {
+
+        const data = req.query;
+        //console.log("data route /checkChatMsgId \n", roomId);
+        const chatRoomMsg = await chatRoomController.checkChatMsgId(data);
+
+        res.status(200).json({ data: chatRoomMsg });
+
+        
+        console.log("chatRooms route /checkChatMsgId \n", chatRoomMsg);
+
+    } catch (error) {
+
+        res.status(500).json({ error: error.message });
+        console.log("error route /chatRoomList \n", error);
+
+    }
+
+});
+
+
+// send 1:1
+router.post('/sendMsgSingle', async (req, res) => {
+
+    try {
+
+        const data = req.body;
+        console.log("data route /sendMsgSingle \n", data.roomId);
+
+        const sendMsg = await socketController.sendMsgSingle(data);
+        //const chatRoomMsg = await chatRoomController.checkChatMsgId(data);
+        //const chatRoomMsg = await chatRoomController.sendMsgSingle(data);
+
+        res.status(200).json({ data: chatRoomMsg });
+
+        console.log("chatRooms route /sendMsgSingle \n", chatRoomMsg);
+
+    } catch (error) {
+
+        res.status(500).json({ error: error.message });
+        console.log("error route /sendMsgSingle \n", error);
+
+    }
+
+});
+
+
+// send Group
+router.get('/sendMsgGroup', async (req, res) => {
 
     try {
 

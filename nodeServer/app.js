@@ -2,8 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 require('dotenv').config();
 const app = express();
-const chatRoomRoutes = require("./routes/chatRoomRoutes");  // chatRoomRoutes 파일을 import
-const cors = require('cors');  // cors 
+const chatRoomRoutes = require("./routes/chatRoomRoutes");  
+const cors = require('cors');  
 
 
 mongoose.connect(process.env.DB)
@@ -20,4 +20,4 @@ app.use(cors({
 app.use(express.json());
 app.use('/api', chatRoomRoutes); // /api 경로에 대한 라우팅
 
-module.exports = app;
+module.exports =  app ;

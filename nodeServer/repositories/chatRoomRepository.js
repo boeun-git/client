@@ -1,5 +1,6 @@
 const ChatRoom = require('../models/chatRoom');
 
+
 //채팅방 생성
 async function addChatRoom(chatRoomData) {
 
@@ -27,9 +28,9 @@ async function addChatRoom(chatRoomData) {
 }
 
 // 채팅방 검색(userName 사용), listChatRoom()도 유사한 듯
-async function getChatRoomList(userName) {
+async function searchChatRoom(userName) {
 
-  console.log('getChatRoomList :', userName);
+  console.log('searchChatRoom :', userName);
 
   try {
 
@@ -38,19 +39,19 @@ async function getChatRoomList(userName) {
     if (!chatRoom) {
 
         // 채팅방이 없을 경우
-      console.log(`repository getChatRoomList userName : ${userName}`);
+      console.log(`repository userName : ${userName}`);
 
     } else {
 
       // 조회된 채팅방 로그
-      console.log('repository getChatRoomList : ', chatRoom); 
+      console.log('repository searchChatRoom : ', chatRoom); 
 
     }
     return chatRoom;
 
   } catch (err) {
 
-    console.error('Error repository getChatRoomList : ', err); // 에러 로그
+    console.error('Error repository searchChatRoom : ', err); // 에러 로그
     throw err;
 
   }
@@ -87,7 +88,7 @@ async function getChatRoomId(id) {
   }
 }
 
-// 특정 채팅방 get(chat_userId 이용), checkChatRoom으로도 사용 가능할듯
+// 특정 채팅방 get(chat_userId 이용)
 async function getChatRoomUser(userName, chatUserId) {
 
   console.log('repository getChatRoomUser : ', userName); // ID로 조회 전 로그
@@ -118,26 +119,36 @@ async function getChatRoomUser(userName, chatUserId) {
   
 }
 
-// 채팅방 삭제 (특정 _id로 삭제)
-async function removeChatRoom(id) {
-  console.log('repository removeChatRoom :', id);
+// 특정 채팅방 get(chat_userId 이용)
+async function getChatRoomUsers(chatUserId) {
+
+  console.log('repository getChatRoomUsers : ', chatUserId); // ID로 조회 전 로그
 
   try {
-    // _id로 채팅방을 찾아 삭제
-    const removeChatRoom = await ChatRoom.findByIdAndDelete(id);
 
-    if (!removeChatRoom) {
-      console.log(`채팅방이 존재하지 않거나 삭제에 실패했습니다. id: ${id}`);
-      return null;
+    // 배열에 두 값이 모두 포함되면 찾음
+    const chatRoom = await ChatRoom.findOne({chat_user: { $all: chatUserId }});
+
+    if (!chatRoom) {
+
+      console.log(`repository chat_user : ${chatUserId}`); 
+
     } else {
-      console.log('repository removeChatRoom 성공:', removeChatRoom);
-      return removeChatRoom;
+
+      console.log('repository getChatRoomUsers : ', chatRoom); 
+
     }
 
+    return chatRoom;
+
   } catch (err) {
-    console.error('Error repository removeChatRoom : ', err); 
-    throw err;  
+
+    console.error('Error repository getChatRoomUsers : ', err); // 에러 로그
+    throw err;
+
   }
+  
 }
 
-module.exports = { addChatRoom, getChatRoomList, getChatRoomId, getChatRoomUser, removeChatRoom};
+
+module.exports = { addChatRoom, searchChatRoom, getChatRoomId, getChatRoomUser, getChatRoomUsers};

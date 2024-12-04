@@ -5,22 +5,28 @@ const msgService = require('../services/msgService');
 const addChatRoom = async (req) => {
 
     console.log("controller addChatRoom req : ", req);
-
+    let room = '';
     //생성 전 room의 여부 확인
-    const room = await chatRoomController.getChatRoomUser(req.chat_user[0], req.chat_user[1]);
-
+    if (req.chat_type === 1){
+        room = await chatRoomService.getChatRoomUser(req.chat_user[0], req.chat_user[1]);
+    }else{
+        if (typeof req.chat_user === 'string') {
+            req.chat_user = JSON.parse(req.chat_user); // 문자열을 배열로 변환
+        }
+        room = await chatRoomService.getChatRoomUsers(req.chat_user);
+    }
     //없다면 채팅방 생성
     if(room === null){
 
         const add = await chatRoomService.addChatRoom(req);
 
-        console.log("controllser addChatRoom add \n", add);   
+        console.log("controller addChatRoom add \n", add);   
 
         return {data: add}
 
     }else{
         //있다면 있는 정보 return
-        console.log("controllser addChatRoom room \n", room);   
+        console.log("controller addChatRoom room \n", room);   
         return {data:room}
     }
 
@@ -30,15 +36,19 @@ const addChatRoom = async (req) => {
 //채팅방 리스트
 const getChatRoomList = async (req) => {
 
-    const chatRoomList = await chatRoomService.getChatRoomList(req);
+    console.log("chatRoomController getChatRoomList : ", req);
+
+    const chatRoomList = await chatRoomService.searchChatRoom(req.trim());
+    
+    console.log("chatRoomController getChatRoomList : ", chatRoomList);
 
     const chatRooms = await Promise.all(chatRoomList.map(async (result) => {
 
         const chatRoomMsg = await msgService.getChatRoomMsg(result._id);
         
         //나중에 msg가 없다면 room삭제하는 것 추가하기
-        const lastMsg = chatRoomMsg && chatRoomMsg.msg ? chatRoomMsg.msg : 'No message';
-        console.log(result.chat_user,result.chat_type,result._id, lastMsg);
+        const lastMsg = chatRoomMsg[0] && chatRoomMsg[0].msg ? chatRoomMsg[0].msg : 'No message';
+        console.log("lastMsg : ",result.chat_user,result.chat_type,result._id, lastMsg);
 
         return {
             userName: result.chat_user,
@@ -106,4 +116,27 @@ const checkChatMsgId = async(data)=>{
 }
 
 
-module.exports = { addChatRoom, getChatRoomList, getChatRoomUser, getChatRoomId, getChatRoomMsg, getChatMsg , checkChatMsgUser, checkChatMsgId}
+const sendMsgSingle = async(data)=>{
+    //const roomId = data.roomId;
+    //const sendUserName = data.sendUserName;
+    console.log(data);
+
+    
+    
+    const getMsg = await msgService.addMsg(data);
+
+    return getMsg;
+}
+
+
+
+module.exports = { 
+    addChatRoom, 
+    getChatRoomList, 
+    getChatRoomUser, 
+    getChatRoomId, 
+    getChatRoomMsg, 
+    getChatMsg , 
+    checkChatMsgUser, 
+    checkChatMsgId,
+    sendMsgSingle}
