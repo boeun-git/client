@@ -96,7 +96,7 @@ async function getChatRoomUser(userName, chatUserId) {
   try {
 
     // 배열에 두 값이 모두 포함되면 찾음
-    const chatRoom = await ChatRoom.findOne({chat_user: { $all: [userName, chatUserId] }});
+    const chatRoom = await ChatRoom.find({chat_user: { $all: [userName, chatUserId] }});
 
     if (!chatRoom) {
 

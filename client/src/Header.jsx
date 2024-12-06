@@ -14,7 +14,7 @@ const Header = () => {
                         <ul class="loginMenu">
                             <li class="non-side-bar"><span id="username" class="text-white me-2">username</span></li>
                             <li id="login" class="non-side-bar"><a href="/login">로그인</a></li>
-                            <li id="join" class="non-side-bar"><a href="/join">회원가입</a></li>
+                            <li id="join" class="non-side-bar"><a href="http://localhost:8080/user/selectRole">회원가입</a></li>
                         </ul>
                     </div>
                 </div>
@@ -22,7 +22,7 @@ const Header = () => {
                 <div class="headerCategory">
                     <div class="category">
                         <ul class="categoryList">
-                            <li><a href="/searchStore">가게 검색</a></li>
+                            <li><a href="http://localhost:8080/searchStore">가게 검색</a></li>
                             <li><a href="#">커뮤니티</a></li>
                             <li><a href="#">예약</a></li>
                             <li><a href="#">포인트 상점</a></li>

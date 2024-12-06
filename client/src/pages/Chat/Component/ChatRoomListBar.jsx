@@ -1,65 +1,61 @@
-/*import React from 'react';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Button from 'react-bootstrap/Button';
+import React from 'react';
+import {
+  CDBSidebar,
+  CDBSidebarContent,
+  CDBSidebarFooter,
+  CDBSidebarMenu,
+} from 'cdbreact';
+import { NavLink } from 'react-router-dom';
 
-
-const ChatRoomListBar = () => {
-  return (
-    <ButtonGroup vertical>
-      <Button>Button</Button>
-      <Button>Button</Button>
-      <Button>Button</Button>
-      <Button>Button</Button>
-    </ButtonGroup>
-  );
-}
-
-export default ChatRoomListBar;
-
-const ChatRoomListBar = () => {
-    return (
-        <div>
-            
-        </div>
-    );
-};
-
-export default ChatRoomListBar;*/
-import Nav from 'react-bootstrap/Nav';
-
-function StackedExample() {
-  return (
-    <Nav variant="pills" defaultActiveKey="/home" className="flex-column" style={{border:'1px black solid'}}>
-      <Nav.Link href="/home">채팅목록</Nav.Link>
-      <Nav.Link eventKey="link-1">채팅검색</Nav.Link>
-      <Nav.Link eventKey="link-2">회원검색</Nav.Link>
-      <Nav.Link eventKey="link-3">가게검색</Nav.Link>
-    </Nav>
-  );
-}
-
-export default StackedExample;
-/*import React from "react";
-import '../../../style/Sidebar.css';
-
-function Sidebar({ activeMenu, setActiveMenu }) {
-  const menus = ["채팅 목록", "채팅 검색", "회원 검색", "가게 검색"];
+const Sidebar = ({ menuName }) => {
+  const menuClick = (menu) => {
+    // 클릭한 메뉴에 따라 상태 변경
+    menuName(menu);
+  };
 
   return (
-    <div className="sidebar">
-      <ul>
-        {menus.map((menu) => (
-          <li
-            key={menu}
-            className={activeMenu === menu ? "active" : ""}
-            onClick={() => setActiveMenu(menu)}
+    <div style={{margin:'0', padding:'0',  border:'1px solid red', display: 'flex', height: '100vh', marginTop:'0'/*, overflow: 'scroll initial' */}}>
+      <CDBSidebar
+        textColor="#fff"
+        /*backgroundColor="#4880FF"*/
+        backgroundColor="#4880FF"
+        toggled = "false"
+        style={{margin:'0', padding:'0'/*' marginLeft: '40%'200px'*/ }} // 원하는 간격으로 변경
+      >
+
+
+        <CDBSidebarContent className="sidebar-content" style={{/*border: '1px solid black'*/}}>
+          <CDBSidebarMenu>
+            <NavLink  activeClassName="activeClicked" onClick={() => menuClick('chatRoomList')}>
+                <b><center>채팅<br/>목록</center></b>
+                <hr/>
+            </NavLink>
+            <NavLink exact activeClassName="activeClicked" onClick={() => menuClick('chatRoomSearch')}>
+                <b><center>채팅<br/>검색</center></b>
+                <hr/>
+            </NavLink>
+            <NavLink exact activeClassName="activeClicked"  onClick={() => menuClick('userSearch')}>
+                <b><center>회원<br/>검색</center></b>
+                <hr/>
+            </NavLink>
+            <NavLink exact activeClassName="activeClicked" onClick={() => menuClick('storeSearch')}>
+                <b><center>가게<br/>검색</center></b>
+                <hr/>
+            </NavLink>
+          </CDBSidebarMenu>
+        </CDBSidebarContent>
+
+        <CDBSidebarFooter style={{ textAlign: 'center' }}>
+          <div
+            style={{
+              padding: '20px 5px',
+            }}
           >
-            {menu}
-          </li>
-        ))}
-      </ul>
+          </div>
+        </CDBSidebarFooter>
+      </CDBSidebar>
     </div>
   );
-}
+};
 
-export default Sidebar;*/
+export default Sidebar;

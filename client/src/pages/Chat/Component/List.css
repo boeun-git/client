@@ -1,0 +1,68 @@
+/**/
+CDBContainer{margin:0; padding:0;}
+
+CDBListGroupItem{
+    margin:0; padding:0;
+    color: red;
+
+}
+.active {
+    background-color: #4880FF !important; 
+    color: white !important; 
+}
+  
+
+
+/* 기본 스타일 */
+.CDBListGroupItem {
+    margin:0; padding:0;
+    height: 7rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* 작은 화면에서의 스타일 (모바일) */
+  @media (max-width: 576px) {
+    .CDBListGroup {
+      width: 100%;
+      padding: 0;
+    }
+    .CDBListGroupItem {
+      flex-direction: column;
+      align-items: flex-start;
+      height: auto;
+      padding: 1rem;
+    }
+    .d-flex {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .col {
+      width: 100%;
+    }
+    .CDBInput {
+      margin-bottom: 1rem;
+    }
+    .CDBBtn {
+      width: 100%;
+    }
+  }
+  
+  /* 중간 크기 화면에서의 스타일 (태블릿) */
+  @media (min-width: 577px) and (max-width: 768px) {
+    .CDBListGroup {
+      width: 50%;
+    }
+    .CDBListGroupItem {
+      height: 6rem;
+    }
+  }
+  
+  /* 큰 화면에서의 스타일 (데스크탑) */
+  @media (min-width: 769px) {
+    .CDBListGroup {
+      width: 25rem;
+    }
+  }
+  

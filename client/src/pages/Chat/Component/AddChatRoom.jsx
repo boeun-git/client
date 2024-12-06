@@ -106,7 +106,7 @@ const AddChatRoom = ({setUser, addRoomId, addRoomUser, addRoomType}) => {
     }    
 
     return (
-        <div style={{/*border:'1px black solid'*/}}>
+        <div >
             <b>채팅방 추가 </b>
             <p>{chatRoomAdd.chat_user} - {chatRoomAdd.chat_type}</p>
             <div>
@@ -135,7 +135,7 @@ const AddChatRoom = ({setUser, addRoomId, addRoomUser, addRoomType}) => {
                     onChange={(e) => setChatUserNames(e.target.value)}
                 />
                 <button onClick={groupJoinUserName}>단체</button>
-            </div>          
+            </div>        
         </div>
     );
 };

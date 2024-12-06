@@ -71,7 +71,23 @@ const getChatRoomUser = async (userNames) => {
     console.log("controller getChatRoomUser : ",userName);
     const getChatRoom = await chatRoomService.getChatRoomUser(userName[0].trim(), userName[1].trim());
 
-    return getChatRoom;
+    const chatRooms = await Promise.all(getChatRoom.map(async (result) => {
+
+        const chatRoomMsg = await msgService.getChatRoomMsg(result._id);
+        
+        //나중에 msg가 없다면 room삭제하는 것 추가하기
+        const lastMsg = chatRoomMsg[0] && chatRoomMsg[0].msg ? chatRoomMsg[0].msg : 'No message';
+        console.log("lastMsg : ",result.chat_user,result.chat_type,result._id, lastMsg);
+
+        return {
+            userName: result.chat_user,
+            id : result._id,
+            msg : lastMsg,
+        };
+    }));
+
+
+    return chatRooms;
 
 };
 

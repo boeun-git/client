@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import { SocketProvider } from './Socket';
-import ChatRoomList from './Component/GetChatRoomList';
-import AddChatRoom from './Component/AddChatRoom';
-import ChatRoomListBar from './Component/ChatRoomListBar';
-import SendChatMsg from './Component/SendChatMsg';
+//import ChatRoomList from './component/GetChatRoomList';
+import ChatRoomList from './component/ChatList';
+import AddChatRoom from './component/AddChatRoom';
+import ChatRoomListBar from './component/ChatRoomListBar';
+import SendChatMsg from './component/SendChatMsg';
 import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
-//import "../../style/Chat.css";
+import "../../style/chat/Chat.css";
+import ChatSearch from './component/ChatSearch';
+import StoreSearch from './component/StoreSearch';
+import UserSearch from './component/UserSearch';
 
 function Chat() {
 
@@ -14,14 +18,20 @@ function Chat() {
     const [selectedRoomType, setSelectedRoomType] = useState(null); // 선택된 방의 type
     const [selectedRoomUser, setSelectedRoomUser] = useState(null); // 선택된 방의 user
     const [loginUserName, setLoginUserName] = useState(null); // userName(로그인된)
+    const [menuName, setMenuName] = useState(null); // userName(로그인된)
+    const [storeName, setStoreName] = useState(null); // userName(로그인된)
+    const [showSendChatMsg, setShowSendChatMsg] = useState(false);
 
     const handleRoomSelect = (roomId) => {
       setSelectedRoomId(roomId); 
+      setShowSendChatMsg(true);
+        console.log("setShowSendChatMsg : ", showSendChatMsg);        
       console.log("selectedRoomId : ", selectedRoomId);
     };
 
     const handleRoomId = (roomId) => {
         setSelectedRoomId(roomId); 
+        
         console.log("selectedRoomId : ", selectedRoomId);        
     }
 
@@ -51,44 +61,73 @@ function Chat() {
       console.log("loginUserName : ", loginUserName);
     };
 
+    const clickMenuName = (menu) => {
+      setMenuName(menu); 
+      setShowSendChatMsg(false);
+      console.log("menuName : ", menuName);
+    };
+
+    const clickStore = (getStoreName) => {
+      setStoreName(getStoreName);
+      setShowSendChatMsg(true);
+      console.log("storeName : ", storeName);
+    }
+
     return (
-        <div className="flex flex-grow h-full">
+      <div>
+        <div className="flex flex-grow h-full chat-container" style={{}}>
         <SocketProvider>
             {/*<div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>*/}
             {/*<div className="chat-container d-flex justify-content-center " style={{ height: '100%', marginTop : '0' }}>*/}
             
                 <h2>{/*loginUserName*/}</h2>
-<Container>
-                <Stack direction="horizontal" className="chat-container" gap={1} >
-                    <div className="p-2 sm-auto" style={{ height: '100%', marginTop : '0' }}> 
-                        {/*<ChatRoomListBar/>*/}
-                        <ChatRoomListBar />
-                    </div>
+                <Container>
+                <Stack direction="horizontal" gap={1} >
+                  <ChatRoomListBar menuName={clickMenuName}/>
+
                     <div className="p-2" style={{ height: '100%', marginTop : '0' }}>
-                        <ChatRoomList 
+                      {(menuName === null || menuName === 'chatRoomList' )  && <ChatRoomList onRoomSelect={handleRoomSelect} 
+                        onRoomType={handleRoomType} 
+                        onRoomUser={handleRoomUser}/>}
+                      {menuName === 'chatRoomSearch' && <ChatSearch onRoomSelect={handleRoomSelect} 
+                        onRoomType={handleRoomType} 
+                        onRoomUser={handleRoomUser}/>}
+                      {/*menuName === 'chatRoomList' && <ChatRoomList onRoomSelect={handleRoomSelect}
+                        onRoomType={handleRoomType} 
+                        onRoomUser={handleRoomUser}/>*/}
+                        {menuName === 'storeSearch' && <StoreSearch  getStoreName = {clickStore}/>}
+                        {menuName === 'userSearch' && <UserSearch/>}
+                       {/* <ChatRoomList 
                         onRoomSelect={handleRoomSelect} 
                         onRoomType={handleRoomType} 
-                        onRoomUser={handleRoomUser}/>
+                        onRoomUser={handleRoomUser}/>*/}
                     </div>
-                    <div className="p-2" style={{ height: '100%', marginTop : '0' }}>
-                        {<AddChatRoom 
+
+                    {/*<div className="p-2" style={{ height: '100%', marginTop : '0' }}>*/}
+                        <AddChatRoom 
                         setUser={handleUserName} 
                         addRoomId = {handleRoomId} 
                         addRoomUser = {addRoomUser} 
-                        addRoomType={addRoomType}/>}
-                    </div>
+                        addRoomType={addRoomType}/>
+                    {/*</div>*/}
                     <div className='p-2' style={{ height: '100%', marginTop : '0' }}>
+                    {showSendChatMsg === true  && 
                         <SendChatMsg 
                         roomId={selectedRoomId} 
                         type={selectedRoomType} 
                         users={selectedRoomUser} 
-                        userName={loginUserName} />
+                        userName={loginUserName} />}
                     </div>
                 </Stack>    
                 </Container>                
             {/*</div>*/}
+            
+
         
         </SocketProvider>
+        
+        </div>
+        
         </div>
     );
 
