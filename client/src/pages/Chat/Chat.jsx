@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import { SocketProvider } from './Socket';
 //import ChatRoomList from './component/GetChatRoomList';
-import ChatRoomList from './component/ChatList';
-import AddChatRoom from './component/AddChatRoom';
-import ChatRoomListBar from './component/ChatRoomListBar';
-import SendChatMsg from './component/SendChatMsg';
+import ChatRoomList from './Component/ChatList';
+import AddChatRoom from './Component/AddChatRoom';
+import ChatRoomListBar from './Component/ChatRoomListBar';
+import SendChatMsg from './Component/SendChatMsg';
 import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
 import "../../style/chat/Chat.css";
-import ChatSearch from './component/ChatSearch';
-import StoreSearch from './component/StoreSearch';
-import UserSearch from './component/UserSearch';
+import ChatSearch from './Component/ChatSearch';
+import StoreSearch from './Component/StoreSearch';
+import UserSearch from './Component/UserSearch';
 
 function Chat() {
 
