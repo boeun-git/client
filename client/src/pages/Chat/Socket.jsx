@@ -1,4 +1,3 @@
-// Socket.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import io from 'socket.io-client';
 
@@ -6,18 +5,16 @@ import io from 'socket.io-client';
 const SocketContext = createContext();
 
 // SocketProvider 컴포넌트 - Socket을 하위 컴포넌트들에게 제공
-export const SocketProvider = ({ children }) => {
+export const SocketProvider = ({ children, userName })=> {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        //if (!socket) {
-            //const socketInstance = io("http://localhost:3001", {
-            //    transports: ['websocket'] 
-            //});
-            
+        if (userName) {
             const socketInstance = io("http://localhost:3001", {
-               transports: ['websocket'] 
+                transports: ['websocket'], // 연결에 WebSocket 사용
+                query: { userName } // userName을 쿼리로 전달
             });
+
             // 연결된 소켓 ID 로그 출력
             socketInstance.on('connect', () => {
                 console.log('Connected with socket id:', socketInstance.id);
@@ -29,11 +26,11 @@ export const SocketProvider = ({ children }) => {
             return () => {
                 socketInstance.disconnect();
             };
-        //}
-    }, []); //socket
+        }
+    }, [userName]); //socket
 
     return (
-        <SocketContext.Provider value={socket}>
+        <SocketContext.Provider value={socket} name={userName }>
             {children}
         </SocketContext.Provider>
     );

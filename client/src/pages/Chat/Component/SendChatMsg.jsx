@@ -37,7 +37,7 @@ const SendChatMsg = ({roomId, userName, type, users}) => {
             console.log('response.data : ', response.data);
             console.log('response.data.data : ', response.data.data);
             console.log('response.data.data[0] : ', response.data.data[0]);
-            console.log('preReceiveMsg : ', preReceiveMsg);
+            //console.log('preReceiveMsg : ', preReceiveMsg);
 
         })
         .catch((error) => {
@@ -59,6 +59,7 @@ const SendChatMsg = ({roomId, userName, type, users}) => {
 
             // 메시지 수신 이벤트
             socket.on('receiveMessage', (room, msg, chatUserName) => {
+                console.log("receiveMessage: " ,msg, chatUserName);
                 setRoom(room);
                 setChatUserName((prevChatUserName) => [...prevChatUserName, chatUserName]);
                 console.log("receiveMessage: " ,msg, chatUserName);
@@ -66,10 +67,11 @@ const SendChatMsg = ({roomId, userName, type, users}) => {
             });
         }
 
-    }, [socket]); 
+    }, []); 
 
     const sendMsg = () => {
         socket.emit('sendMsg', roomId, msg, userName, type, 0, users);
+        console.log("sendMsg: ", roomId, msg, userName, type, 0, users);
     }
 
     return (

@@ -60,9 +60,14 @@ const AddChatRoom = ({setUser, addRoomId, addRoomUser, addRoomType}) => {
                 setChatRoomAdd(response.data.data.data);
                 console.log('1:1 addChatRoom.js : ', response.data.data);
                 
-                const roomId = response.data.data.data._id; // _id 추출
-            console.log('chat_user : ', response.data.data.data.chat_user);
-            console.log('response:', response)
+                
+                console.log('response : ', response);
+                console.log('response.data : ', response.data);
+                console.log('response.data.data : ', response.data.data);
+                console.log('response.data.data.data : ', response.data.data.data);
+                console.log('response.data.data.data[0] : ', response.data.data.data[0]);
+                console.log('response.data.data.data[0]._id : ', response.data.data.data[0]._id);
+                const roomId = response.data.data.data[0]._id; // _id 추출
             // addRoomId는 이제 비동기적으로 처리 후 호출됨
             addRoomId(roomId);
             addRoomType(1);

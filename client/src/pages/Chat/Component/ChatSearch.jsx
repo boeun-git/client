@@ -9,7 +9,8 @@ const ChatSearch = ({onRoomSelect, onRoomType, onRoomUser}) => {
     const [searchUserName, setSearchUserName] = useState('');
     const [searchRoom, setSearchRoom] = useState([]);
 
-    const userName = 'userId3,'+ searchUserName;
+    const userName = sessionStorage.getItem("userName")+','+ searchUserName;
+
     const searchButtonClick = () => {
         if(searchUserName) {
             axios.get('http://localhost:3001/api/searchChatRoom', {
@@ -42,34 +43,33 @@ const ChatSearch = ({onRoomSelect, onRoomType, onRoomUser}) => {
                     <div class="input-group mb-3">
                         <input type="text" class="form-control searchUserName" onChange={searchUserNameChange}/>
                         <div class="input-group-append">
-                        <button className="btn btn-primary" onClick={searchButtonClick}>
-                  <i className="fas fa-search"></i>
-                </button>
+                            <button className="btn btn-primary" onClick={searchButtonClick}>
+                                <i className="fas fa-search"></i>
+                            </button>
                         </div>
                     </div>
                 </div>	
             </CDBListGroupItem>
-
+            
             {
-                searchRoom.length === 0 ? (
-                    <CDBListGroupItem className="d-flex " style={{ height: "7rem" }}>
-                        <center><b>채팅한 내역이 없습니다.</b></center>
-                    </CDBListGroupItem>                    
-                    
-                ) : (
-                    searchRoom.map((room, index) => {
+            searchRoom.length === 0 ? (
+            <CDBListGroupItem className="d-flex " style={{ height: "7rem" }}>
+                <center><b>채팅한 내역이 없습니다.</b></center>
+            </CDBListGroupItem>                            
+            ) : (
+            searchRoom.map((room, index) => {
                         
-                        const chatUsers = room.userName.filter(name => name !== 'userId3');
+            const chatUsers = room.userName.filter(name => name !== 'userId3');
 
-                        return (
-                            <CDBListGroupItem key={index} className="d-flex " style={{ height: "7rem"}} onClick={() => {onRoomSelect(room.id); onRoomType(room.chatType); onRoomUser(chatUsers);}}>
-                                <b>{chatUsers.join(',')}</b>
-                                <br/><br/>
-                                <p>{room.msg}</p> {/*<CDBBadge color="info">19</CDBBadge>*/}
-                            </CDBListGroupItem>
-                        );
-                    })
-                )
+            return (
+            <CDBListGroupItem key={index} className="d-flex " style={{ height: "7rem"}} onClick={() => {onRoomSelect(room.id); onRoomType(room.chatType); onRoomUser(chatUsers);}}>
+                <b>{chatUsers.join(',')}</b>
+                <br/><br/>
+                <p>{room.msg}</p> {/*<CDBBadge color="info">19</CDBBadge>*/}
+            </CDBListGroupItem>
+            );
+            })
+            )
             }
             
         </CDBListGroup>

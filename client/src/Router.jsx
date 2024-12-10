@@ -13,7 +13,7 @@ const Router = () => {
                 
                 */}
                 <Route path='/admin' element={<Admin />}/>
-                <Route path='/chat' element={<Chat />}/>
+                <Route  path='/chat/:name/:role' element={<Chat />}/>
             </Routes>
         </BrowserRouter>
 

@@ -14,29 +14,49 @@ router.post('/addChatRoom', async(req, res) => {
         const data = req.body;
         console.log("data route /addChatRoom \n", data);
 
-        //접속여부확인하기
-        if (! socketController.checkUser(data.chat_user)) {
-            res.status(500).json({data :  "offline"});
-            console.log("error route /addChatRoom : offline", );
-            return;
+        if(data.chat_type === 1){
+            console.log("chatRoomRoutes.js /addChatRoom 1:1 chat");
+            if (! socketController.checkUserSingle(data.chat_user[1])) {
+                res.status(500).json({data :  "offline"});
+                console.log("error route /addChatRoom : offline", );
+                return;
+            }
+        }else{
+            if (! socketController.checkUser(data.chat_user)) {
+                res.status(500).json({data :  "offline"});
+                console.log("error route /addChatRoom : offline", );
+                return;
+            }
         }
+        //접속여부확인하기
+        
 
         const addChatRoom = await chatRoomController.addChatRoom(data);
 
-        const roomId = addChatRoom.data._id.toString();
-        //console.log(roomId);
+//        const roomId = addChatRoom.data._id;
+        console.log('addChatRoom : ',addChatRoom);
+        console.log('addChatRoom.data : ',addChatRoom.data);
+        console.log('addChatRoom.data : ',addChatRoom.data._id);
+        //console.log('addChatRoom.data[0] : ',addChatRoom.data[0]);
+        //console.log('addChatRoom.data[0]._id : ',addChatRoom.data[0]._id);
+
+        //console.log('addChatRoom.data[0]._id : ',roomId);
+        //console.log('roomId.string : ',roomId.toString());
 
         if(data.chat_type === 0){
+            const roomId = addChatRoom.data._id.toString();
             //group
+            console.log("chatRoomRoutes.js /addChatRoom group before :\n", roomId, data.chat_user);
             socketController.groupJoinRoom(roomId, data.chat_user);
+            console.log("chatRoomRoutes.js /addChatRoom group after");
         }else{
+            const roomId = addChatRoom.data[0]._id.toString();
             //1:1
+            console.log("chatRoomRoutes.js /addChatRoom 1:1 before :\n", roomId, data.chat_user);
             socketController.SingleJoinRoom(roomId, data.chat_user);
+            console.log("chatRoomRoutes.js /addChatRoom 1:1 after");
         }
-        
-        
-        //io.emit('getSingleJoinRoom', roomId, data.chat_user);  // 클라이언트에게 방 입장을 알림
-
+    
         res.status(200).json({data: addChatRoom});
 
     } catch (error) {
@@ -178,7 +198,8 @@ router.get('/getChatMsg', async (req, res) => {
         //     return;
         // }        
 
-        res.status(200).json({ data: chatRoomMsg, onoff : "on" });
+        //res.status(200).json({ data: chatRoomMsg, onoff : "on" });
+        res.status(200).json({ data: chatRoomMsg});
 
         console.log("data route /chatRoomList \n", data);
         console.log("chatRooms route /chatRoomList \n", chatRoomMsg);
