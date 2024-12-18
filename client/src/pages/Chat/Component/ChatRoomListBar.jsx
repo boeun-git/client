@@ -11,11 +11,12 @@ const Sidebar = ({ menuName }) => {
   const menuClick = (menu) => {
     // 클릭한 메뉴에 따라 상태 변경
     menuName(menu);
+    console.log('ChatRoomListBar : ', menu);
   };
   const role = sessionStorage.getItem("role");
 
   return (
-    <div style={{margin:'0', padding:'0', display: 'flex', height: '100vh', marginTop:'0', overflow: 'scroll initial' }}>
+    <div style={{margin:'0', padding:'0', display: 'flex', height: '86vh', marginTop:'0' }}>
       <CDBSidebar
         textColor="#fff"
         backgroundColor="#4880FF"

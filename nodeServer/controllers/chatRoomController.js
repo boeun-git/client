@@ -8,26 +8,30 @@ const addChatRoom = async (req) => {
     let room = '';
     //생성 전 room의 여부 확인
     if (req.chat_type === 1){
-        room = await chatRoomService.getChatRoomUser(req.chat_user[0], req.chat_user[1]);
+        room = await chatRoomService.getChatRoomUser(req.chat_user[0].userName, req.chat_user[1].userName);
     }else{
         if (typeof req.chat_user === 'string') {
-            req.chat_user = JSON.parse(req.chat_user); // 문자열을 배열로 변환
+            req.chat_user = JSON.parse(req.chat_user);
         }
         room = await chatRoomService.getChatRoomUsers(req.chat_user);
     }
     //없다면 채팅방 생성
-    if(room === null){
+    if(room === null || room.length === 0){
+
+
+        console.log("controller addChatRoom add \n", req);   
 
         const add = await chatRoomService.addChatRoom(req);
 
         console.log("controller addChatRoom add \n", add);   
 
-        return {data: add}
+        return add;
 
     }else{
         //있다면 있는 정보 return
         console.log("controller addChatRoom room \n", room);   
-        return {data:room}
+
+        return room;
     }
 
 };
@@ -46,16 +50,27 @@ const getChatRoomList = async (req) => {
 
         const chatRoomMsg = await msgService.getChatRoomMsg(result._id);
         
-        //나중에 msg가 없다면 room삭제하는 것 추가하기
-        const lastMsg = chatRoomMsg[0] && chatRoomMsg[0].msg ? chatRoomMsg[0].msg : 'No message';
-        console.log("lastMsg : ",result.chat_user,result.chat_type,result._id, lastMsg);
+        
+        //const lastMsg = chatRoomMsg[0] && chatRoomMsg[0].msg ? chatRoomMsg[0].msg : 'No message';
+        //msg가 없다면 room삭제
+        const lastMsg = chatRoomMsg[0] && chatRoomMsg[0].msg ? chatRoomMsg[0].msg : (chatRoomService.rmChatRoom(result._id));
+        //const receiveChk = chatRoomMsg[0] && chatRoomMsg[0].receive?.[result.chat_user]?.receive_chk ? chatRoomMsg[0].receive[result.chat_user].receive_chk : '';
+        
+        if(chatRoomMsg[0]){
+            console.log("chatRoomController chatroomMsg[0]",chatRoomMsg[0]);
+        }
+        const receiveChk = chatRoomMsg[0]?.receive?.get(req)?.receive_chk || '';
 
+        console.log("lastMsg : ", req, result.chat_user, result.chat_type, result._id, lastMsg, "receive_chk : ", receiveChk);
+    
         return {
             userName: result.chat_user,
             chatType: result.chat_type,
-            id : result._id,
-            msg : lastMsg,
+            id: result._id,
+            msg: lastMsg,
+            receiveChk: receiveChk,  // receive_chk 값을 추가
         };
+
     }));
 
     return chatRooms;
@@ -83,6 +98,7 @@ const getChatRoomUser = async (userNames) => {
             userName: result.chat_user,
             id : result._id,
             msg : lastMsg,
+            chatType : result.chat_type
         };
     }));
 
@@ -144,7 +160,22 @@ const sendMsgSingle = async(data)=>{
     return getMsg;
 }
 
+const receiveMsgChk = async(data)=>{
 
+    console.log(data);
+
+    const getMsg = await msgService.receiveMsgChk(data.msgId, data.userName);
+
+    //return getMsg;
+}
+
+const receiveMsgAllChk = async(roomId, userName)=>{
+
+    console.log(roomId, userName);
+
+    await msgService.receiveMsgAllChk(roomId, userName);
+
+}
 
 module.exports = { 
     addChatRoom, 
@@ -155,4 +186,6 @@ module.exports = {
     getChatMsg , 
     checkChatMsgUser, 
     checkChatMsgId,
-    sendMsgSingle}
+    sendMsgSingle,
+    receiveMsgChk,
+    receiveMsgAllChk}

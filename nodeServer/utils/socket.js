@@ -15,7 +15,10 @@ const httpServer = createServer(app);
 const io = socketIo(httpServer, {
     cors: {
         // 허용하는 클라이언트의 origin 설정
-        origin: "http://localhost:3000",  
+        //origin: "http://localhost:3000",  
+        //origin: "http://localhost:80",  
+        //origin: "http://localhost:3000",  
+        origin: "*",
         methods: ['GET', 'POST']
     }
 });

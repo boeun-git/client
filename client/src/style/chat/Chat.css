@@ -1,8 +1,17 @@
-body{
-  margin: 0;
-  /*height: 100vh;*/
-
-}
+/* html, body {
+  min-height: 100vh;
+} */
+    /* 기본 마진 제거 */
+/* 
+*, *::before, *::after {
+  margin : 0;
+  padding: 0;
+} */
+/* 
+.body .chat-container {
+  width: 100%;
+  height: 100%;
+} */
 /*.chat-container {*/
     /*margin: 0;*/
    /* align-items: center;
@@ -17,26 +26,26 @@ body{
     position: relative;
   }*/
 
-  .chat-container {
+  /* .chat-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     max-width: 1100px;
     margin: 0 auto;
-  }
+  } */
 
-  .chat-sidebar {
+  /*.chat-sidebar {*/
     /*flex: 0 0 20%;*/
-    width: 15%;
-    background-color: #34495e;
-    color: #ffffff;
-    display: flex;
-    position: relative;
+    /*width: 15%;*/
+    /*background-color: #34495e;*/
+    /*color: #ffffff;*/
+    /*display: flex;*/
+    /*position: relative;*/
     /*flex-direction: column;
     align-items: stretch;*/
-    padding: 0px;
-  }
-
+    /*padding: 0px;}*/
+  
+/* 
 
   .chatsearch {
 
@@ -45,7 +54,7 @@ body{
     
     margin:0; padding:0;
     border: 1px solid #CFCFCF;
-  }    
+  }     */
   /*
   .menu-item {
     padding: 15px;
@@ -115,3 +124,71 @@ body{
     border: none;
     background-color: #1abc9
   */
+  * {
+    margin: 0;
+    padding: 0;
+  }
+  body, html{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  .body{
+    position: absolute;
+    top:0;
+    left:0;
+    right: 0;
+    bottom:0;    
+    width: 100vw; /* 뷰포트의 너비 */
+    height: 100vh; /* 뷰포트의 높이 */
+    margin: 0; /* 여백 제거 */
+    padding: 0; /* 패딩 제거 */
+    box-sizing: border-box; /* 크기 계산 포함 */
+    /*overflow: hidden;*/
+   /* background-color: aqua; */
+   /* overflow: hidden; */
+  }
+
+  
+  .head {
+    height: 160px;
+    
+  }
+
+  .chat-container {
+    min-height: 100%;
+    margin: -160px 0 -1px;
+  
+    flex: 1; /* 남은 공간을 차지 */
+    box-sizing: border-box;
+    display: inline;
+    /* background-color: red; */
+    /*height: 85vh;*/
+  } 
+.footer{
+  height: 1px;
+}
+  .stack{
+    /* margin-left: 15%; */
+    /* background-color: aliceblue; */
+    
+    justify-content:baseline;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: flex-start;
+    
+  }
+
+  .p-4 {
+    /* margin:0 !important;
+    padding: 0 !important;
+    height: 87vh;
+    border: 1px solid black; */
+  }
+
+  .chatsearch {
+
+
+  }

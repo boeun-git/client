@@ -16,7 +16,11 @@ router.post('/addChatRoom', async(req, res) => {
 
         if(data.chat_type === 1){
             console.log("chatRoomRoutes.js /addChatRoom 1:1 chat");
-            if (! socketController.checkUserSingle(data.chat_user[1])) {
+            //console.log("chatRoomRoutes.js /addChatRoom 1:1 chat", data.chat_user[1]);
+            console.log("chatRoomRoutes.js /addChatRoom 1:1 chat", data.chat_user[1]);
+            console.log("chatRoomRoutes.js /addChatRoom 1:1 chat", data.chat_user[1].userName);
+            //if (! socketController.checkUserSingle(data.chat_user[1])) {
+                if (! socketController.checkUserSingle(data.chat_user[1].userName)) {
                 res.status(500).json({data :  "offline"});
                 console.log("error route /addChatRoom : offline", );
                 return;
@@ -36,12 +40,13 @@ router.post('/addChatRoom', async(req, res) => {
 //        const roomId = addChatRoom.data._id;
         console.log('addChatRoom : ',addChatRoom);
         console.log('addChatRoom.data : ',addChatRoom.data);
-        console.log('addChatRoom.data : ',addChatRoom.data._id);
+        //console.log('addChatRoom.data : ',addChatRoom.data._id);
         //console.log('addChatRoom.data[0] : ',addChatRoom.data[0]);
         //console.log('addChatRoom.data[0]._id : ',addChatRoom.data[0]._id);
 
         //console.log('addChatRoom.data[0]._id : ',roomId);
-        //console.log('roomId.string : ',roomId.toString());
+        //console.log('roomId.string : ',roomId.toString());\
+
 
         if(data.chat_type === 0){
             const roomId = addChatRoom.data._id.toString();
@@ -50,11 +55,46 @@ router.post('/addChatRoom', async(req, res) => {
             socketController.groupJoinRoom(roomId, data.chat_user);
             console.log("chatRoomRoutes.js /addChatRoom group after");
         }else{
-            const roomId = addChatRoom.data[0]._id.toString();
+            console.log("chatRoomRoutes.js /addChatRoom 1:1 before :\n", addChatRoom, data.chat_user);
+            console.log("chatRoomRoutes.js /addChatRoom 1:1 before :\n", addChatRoom[0], data.chat_user);
+            //console.log("chatRoomRoutes.js /addChatRoom 1:1 before :\n", roomId, data.chat_user);
+
+
+            if (Array.isArray(addChatRoom) && addChatRoom.length > 0 && addChatRoom[0]._id) {
+                // addChatRoom.data가 배열이고 첫 번째 요소에 _id가 존재할 때
+                const roomId = addChatRoom[0]._id.toString();
+                console.log(roomId);
+                console.log("chatRoomRoutes.js /addChatRoom 1:1 before :\n", roomId, data.chat_user);
+                socketController.SingleJoinRoom(roomId, data.chat_user);
+                console.log("chatRoomRoutes.js /addChatRoom 1:1 after");                
+            } else if (addChatRoom && addChatRoom._id) {
+                // addChatRoom.data가 객체이고 _id가 존재할 때
+                const roomId = addChatRoom._id.toString();
+                console.log(roomId);
+                console.log("chatRoomRoutes.js /addChatRoom 1:1 before :\n", roomId, data.chat_user);
+                socketController.SingleJoinRoom(roomId, data.chat_user);
+                console.log("chatRoomRoutes.js /addChatRoom 1:1 after");
+            } else {
+                // 위 조건에 해당하지 않으면
+                console.log('Invalid data structure');
+            }
+            
+            // if (addChatRoom.data[0]._id ) {
+                
+            //     const roomId = addChatRoom.data[0]._id.toString();
+            //     console.log(roomId);
+            //   } else if(addChatRoom.data._id ) {
+            //     const roomId = addChatRoom.data._id.toString();
+            //     console.log(roomId);
+            //   }else{
+            //     const roomId = addChatRoom.data.toString();
+            //     console.log(roomId);
+            //   }
+            
             //1:1
-            console.log("chatRoomRoutes.js /addChatRoom 1:1 before :\n", roomId, data.chat_user);
-            socketController.SingleJoinRoom(roomId, data.chat_user);
-            console.log("chatRoomRoutes.js /addChatRoom 1:1 after");
+            // console.log("chatRoomRoutes.js /addChatRoom 1:1 before :\n", roomId, data.chat_user);
+            // socketController.SingleJoinRoom(roomId, data.chat_user);
+            // console.log("chatRoomRoutes.js /addChatRoom 1:1 after");
         }
     
         res.status(200).json({data: addChatRoom});
@@ -81,6 +121,7 @@ router.get('/getChatRoomList', async (req, res) => {
         console.log("chatRooms route /getChatRoomList \n", chatRooms);
 
         res.status(200).json({ data: chatRooms });
+        
 
     } catch (error) {
 
@@ -188,8 +229,11 @@ router.get('/getChatMsg', async (req, res) => {
 
     try {
 
-        const { data } = req.query;
-        const chatRoomMsg = await chatRoomController.getChatMsg(data);
+        const { roomId, userName } = req.query;
+        console.log("chatRoomRoutes.js getChatMsg : ", roomId, userName);
+        const chatRoomMsg = await chatRoomController.getChatMsg(roomId);
+
+        await chatRoomController.receiveMsgAllChk(roomId, userName);
 
         //접속여부확인하기
         // if (! socketController.checkUser(data.chat_user)) {
@@ -199,16 +243,18 @@ router.get('/getChatMsg', async (req, res) => {
         // }        
 
         //res.status(200).json({ data: chatRoomMsg, onoff : "on" });
-        res.status(200).json({ data: chatRoomMsg});
-
-        console.log("data route /chatRoomList \n", data);
+        
+        
+        //console.log("data route /chatRoomList \n", data);
         console.log("chatRooms route /chatRoomList \n", chatRoomMsg);
+
+        return res.status(200).json({ data: chatRoomMsg});
 
     } catch (error) {
 
-        res.status(500).json({ error: error.message });
         console.log("error route /chatRoomList \n", error);
 
+        return res.status(500).json({ error: error.message });
     }
 
 });
@@ -297,7 +343,6 @@ router.get('/sendMsgGroup', async (req, res) => {
         const chatRoomMsg = await chatRoomController.checkChatMsgId(data);
 
         res.status(200).json({ data: chatRoomMsg });
-
         
         console.log("chatRooms route /checkChatMsgId \n", chatRoomMsg);
 
@@ -309,5 +354,45 @@ router.get('/sendMsgGroup', async (req, res) => {
     }
 
 });
+
+router.get('/receiveMsgChk', async (req, res) => {
+
+    try {
+
+        const data = req.query;
+        console.log("data route /receiveMsgChk \n", data);
+
+        //const receiveMsgChk = await chatRoomController.receiveMsgChk(data);
+
+        await chatRoomController.receiveMsgChk(data);
+        res.status(200).json({  });
+        
+        //console.log("chatRooms route /checkChatMsgId \n", chatRoomMsg);
+
+    } catch (error) {
+
+        res.status(500).json({ error: error.message });
+        console.log("error route /chatRoomList \n", error);
+
+    }
+
+});
+
+router.get('/chkMsg', async(req, res) => {
+
+    try{
+        const { roomId, userName } = req.query;
+
+        await  chatRoomController.receiveMsgAllChk(roomId, userName);
+
+    }catch(error){
+
+        res.status(500).json({ error: error.message });
+        console.log("error route /chkMsg \n", error);
+
+    }
+});
+
+
 
 module.exports = router;

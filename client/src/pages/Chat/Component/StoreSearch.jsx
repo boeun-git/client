@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CDBListGroup, CDBListGroupItem, CDBContainer } from "cdbreact";
 import axios from "axios";
 import './List.css';
+import Stack from "react-bootstrap/esm/Stack";
 
 const StoreSearch = ({getStoreName}) => {
     
@@ -11,7 +12,8 @@ const StoreSearch = ({getStoreName}) => {
     const userName = searchStore;
     const searchButtonClick = () => {
         if(searchStore) {
-           axios.get('http://localhost:8080/api-store/getStoreList', {
+            axios.get('http://localhost:8080/api-store/getStoreList', {
+            
                 params: {
                     searchKeyword: userName  // 서버가 받는 파라미터를 확인하고 보내는 형식이 맞는지 체크
                 }
@@ -19,6 +21,7 @@ const StoreSearch = ({getStoreName}) => {
             .then((response) => {
                 // 서버로부터 받은 데이터 처리
                 setSearchStoreResult(response.data);
+                console.log('StoreSearch response : ', response);
                 console.log('getStoreName : ', response.data);
             })
             .catch((error) => {
@@ -32,12 +35,13 @@ const StoreSearch = ({getStoreName}) => {
     }
 
     return (
-    <CDBContainer style={{width: "25rem", margin:'0', padding:'0'}}>
+    <CDBContainer style={{width: "25rem", margin:'0', padding:'0' , borderColor:'#A6A6A6'}}>
         <CDBListGroup style={{margin:'0', padding:'0', width: "25rem", borderRadius: '0' }}>
-            <CDBListGroupItem style={{ height: "7rem" }}>
-                <div class=" p-4">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control searchStore" onChange={searchStoreChange}/>
+            {/* 채팅 검색(상대방 userName으로 검색) */}
+            <CDBListGroupItem style={{ height: "7rem" , borderColor:'#A6A6A6'}}>
+                <div class=" ">
+                    <div class="input-group " style={{marginTop:'7%'}}>
+                        <input type="text" class="form-control searchStore" onChange={searchStoreChange}  style={{ borderColor:'#A6A6A6'}}/>
                         <div class="input-group-append">
                             <button className="btn btn-primary" onClick={searchButtonClick}>
                                 <i className="fas fa-search"></i>
@@ -46,25 +50,36 @@ const StoreSearch = ({getStoreName}) => {
                     </div>
                 </div>	
             </CDBListGroupItem>
+            </CDBListGroup>
+            <CDBListGroup 
+                style={{ 
+                    width: "25rem", 
+                    borderRadius: '0', 
+                    overflowY: "auto", 
+                    maxHeight: "74vh"
+                }}
+            >
+                <div className="flex-1" style={{ overflowY: "auto" }}>
             {
             searchStoreResult.length === 0 ? (
-            <CDBListGroupItem className="d-flex " style={{ height: "7rem" }}>
-                <center><b>해당되는 가게가 없습니다.</b></center>
-            </CDBListGroupItem>                    
+                    <CDBListGroupItem style={{ textAlign: 'center', height: "74vh", borderColor:'#A6A6A6'}}>
+                        <p style={{verticalAlign: 'middle', marginTop:'50%'}}><b>입력한 내용에 해당되는 가게가 없습니다.</b></p>
+                    </CDBListGroupItem>                
             ): (searchStoreResult.map((store, index) => {
                 const getStore = store.storeName;
 
                 return (
-                <CDBListGroupItem key={index} className="d-flex " style={{ height: "7rem"}} onClick={() => { getStoreName(store.userName);}}>
-                     <div class="flex items-center ps-3 " style={{display: 'flex'}}>
-                         <div style={{display: 'flex'}}><b>{store.userName} {getStore}</b></div>
-                         <div style={{display: 'flex'}}>{store.storeAddr}</div>
-                     </div>
+                <CDBListGroupItem key={index} className="d-flex " style={{ height: "7rem"}} onClick={() => { getStoreName(store.userName, getStore);}}>
+                    <Stack style={{margin:'10px'}}>
+                         <b>{getStore}</b><br/>
+                         {store.storeAddr}
+                    </Stack>    
                 </CDBListGroupItem>
                 );
                 })
             )
             }
+            </div>
         </CDBListGroup>
     </CDBContainer>
   );

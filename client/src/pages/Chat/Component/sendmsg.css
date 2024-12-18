@@ -3,7 +3,7 @@
 @tailwind utilities;
 /*@import 'tailwindcss/base';*/
 
-#chat2 .form-control {
+ #chat2 .form-control {
     border-color: transparent;
   }
   
@@ -18,4 +18,4 @@
     flex: 1;
     height: 1px;
     background: #eee;
-  }
+  } 

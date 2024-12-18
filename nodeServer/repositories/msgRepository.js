@@ -58,8 +58,14 @@ async function getChatRoomMsg(chatRoomId){
 
 //chatRoom의 objectId로 검색
 async function getChatMsg(chatRoomId){
+    //const roomId = new mongoose.Types.ObjectId(chatRoomId);
+    console.log("getChatMsg//////////////" );
+    console.log("chatRoomId:", chatRoomId);
+    if (!mongoose.Types.ObjectId.isValid(chatRoomId)) {
+      throw new Error('Invalid ObjectId format');
+    }
     const roomId = new mongoose.Types.ObjectId(chatRoomId);
-    
+
     console.log('getChatMsg : ', chatRoomId);
 
     try{
@@ -182,9 +188,54 @@ async function receiveUserName (roomId) {
     }
 }
 
+// 메시지를 읽었다고 표시하는 함수
+async function receiveMsgChk (messageId, userId) {
+    try{
+        const msgUpdate = await Msg.updateOne(
+            { _id: messageId },
+            { $set: { [`receive.${userId}.receive_chk`]: 'Y' } }, // 해당 사용자의 receive_chk 값을 'Y'로 업데이트
+            (err, result) => {
+                if (err) {
+                console.log("receiveMsgChk err :", err);
+                } else {
+                console.log("receiveMsgChk :", result);
+                }
+            }
+        );
+    } catch(error){
+        console.log('msgRepository receiveUserName error \n', error);
+    }
+}
+
+// 메시지를 읽었다고 표시하는 함수 (한번에)
+async function receiveMsgAllChk(roomId, userId) {
+    try {
+
+        console.log("메시지 읽기 업데이트 :", roomId, userId);
+        const objectId = new mongoose.Types.ObjectId(roomId);
+        // 해당 roomId에 해당하는 모든 문서의 'receive_chk' 값을 'Y'로 변경
+        const msgUpdate = await Msg.updateMany(
+        { 
+            room_id: objectId,
+            [`receive.${userId}.receive_chk`]: 'N' 
+        },
+        { 
+          '$set': { [`receive.${userId}.receive_chk`]: 'Y' } 
+        }
+        );
+
+        console.log("메시지 읽기 업데이트 성공:", msgUpdate);
+    } catch (error) {
+        console.log('msgRepository receiveMsgChk error \n', error);
+    }
+}
+
+
 module.exports = { 
     addMsg, 
     getChatRoomMsg, 
     checkChatMsg, 
     getChatMsg, 
-    receiveUserName};
+    receiveUserName,
+    receiveMsgChk,
+    receiveMsgAllChk};

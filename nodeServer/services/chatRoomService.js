@@ -29,4 +29,15 @@ const getChatRoomUsers = async (chatUserNames) => {
     return await chatRoomRepository.getChatRoomUsers(chatUserNames);
 };
 
-module.exports = { addChatRoom, searchChatRoom, getChatRoomId, getChatRoomUser, getChatRoomUsers }
+// 특정 채팅방 rm(_id 이용) 
+const rmChatRoom = async (id) => {
+    return await chatRoomRepository.rmChatRoom(id);
+};
+
+module.exports = {
+    addChatRoom, 
+    searchChatRoom, 
+    getChatRoomId, 
+    getChatRoomUser, 
+    getChatRoomUsers, 
+    rmChatRoom }

@@ -11,6 +11,11 @@ module.exports = function(io) {
         console.log(`User ${userName} connected with socket id: ${socket.id}`);
         //*/
 
+    // 소켓 ID 반환 API
+    socket.on("getSocketId", (callback) => {
+        callback(socket.id);
+    });
+            
         console.log(socket.id, ' user connected');
         
         // 클라이언트가 사용자 ID를 보낼 때 처리

@@ -34,7 +34,8 @@ async function searchChatRoom(userName) {
 
   try {
 
-    const chatRoom = await ChatRoom.find({chat_user : userName});
+    //const chatRoom = await ChatRoom.find({chat_user : userName});
+    const chatRoom = await ChatRoom.find({"chat_user.userName": userName});
 
     if (!chatRoom) {
 
@@ -70,7 +71,7 @@ async function getChatRoomId(id) {
 
     if (!chatRoom) {
 
-      console.log(`id : ${id}`);
+      console.log(`repository getChatRoomId id : ${id}`);
 
     } else {
 
@@ -82,25 +83,43 @@ async function getChatRoomId(id) {
 
   } catch (err) {
 
-    console.error('Error repository getChatRoomId : ', err); 
+    console.error('repository getChatRoomId err : ', err); 
     throw err;
 
   }
 }
 
 // 특정 채팅방 get(chat_userId 이용)
-async function getChatRoomUser(userName, chatUserId) {
+async function getChatRoomUser(username, chatUserId) {
 
-  console.log('repository getChatRoomUser : ', userName); // ID로 조회 전 로그
+  console.log('repository getChatRoomUser : ', username, chatUserId); // ID로 조회 전 로그
+
+  if(Array.isArray(chatUserId)){
+    console.log('checkUserSingle users : \n', username, chatUserId);
+    chatUserId = chatUserId[0];
+    console.log('checkUserSingle users : \n', username, chatUserId);
+  }
 
   try {
 
-    // 배열에 두 값이 모두 포함되면 찾음
-    const chatRoom = await ChatRoom.find({chat_user: { $all: [userName, chatUserId] }});
-
+    const chatRoom = await ChatRoom.find({chat_user: { $all: [userName, chatUserId] }, chat_type : 1});
+  //   const chatRoom = await ChatRoom.find({
+  //     chat_user: {
+  //       $elemMatch: { userName: username }  
+  //     },
+  //     chat_type: 1
+  //   }).then((rooms) => {
+     
+  //     return rooms.filter(room => {
+  //         return room.chat_user.some(user => 
+  //             user.userName.includes(chatUserId) || user.storeName.includes(chatUserId)
+  //         );
+  //     });
+  // });
+                            
     if (!chatRoom) {
 
-      console.log(`repository chat_user : ${userName}`); 
+      console.log(`repository getChatRoomUser userName : ${username}`); 
 
     } else {
 
@@ -126,12 +145,21 @@ async function getChatRoomUsers(chatUserId) {
 
   try {
 
-    // 배열에 두 값이 모두 포함되면 찾음
-    const chatRoom = await ChatRoom.findOne({chat_user: { $all: chatUserId }});
+    
+    //const chatRoom = await ChatRoom.findOne({chat_user: { $all: chatUserId }, chat_type: 0});
+    const chatRoom = await ChatRoom.find(
+      {
+        chat_user: 
+        { 
+          // chatUserId 배열을 순회하면서 $elemMatch로 각 userName을 찾음
+          $all: chatUserId.map(user => ({ $elemMatch: { userName: user } })) 
+        }, 
+        chat_type : 0
+      });    
 
     if (!chatRoom) {
 
-      console.log(`repository chat_user : ${chatUserId}`); 
+      console.log(`repository getChatRoomUsers chat_user : ${chatUserId}`); 
 
     } else {
 
@@ -150,5 +178,19 @@ async function getChatRoomUsers(chatUserId) {
   
 }
 
+// 특정 채팅방 delete(_id 이용)
+async function rmChatRoom(id) {
+  try{
+    
+    const deletedChatRoom = await ChatRoom.findByIdAndDelete(id);
+    
+    console.log('repository rmChatRoom : ', deletedChatRoom);
 
-module.exports = { addChatRoom, searchChatRoom, getChatRoomId, getChatRoomUser, getChatRoomUsers};
+  }catch(err){
+    console.error('Error repository rmChatRoom : ', err); // 에러 로그
+    throw err;
+  }
+  
+}
+
+module.exports = { addChatRoom, searchChatRoom, getChatRoomId, getChatRoomUser, getChatRoomUsers, rmChatRoom};

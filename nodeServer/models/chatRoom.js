@@ -6,12 +6,11 @@ mongoose.set('debug', true);
 //채팅방 스키마
 const chat_roomSchema = new mongoose.Schema({
 
-    //chat_user는 배열, userName
-    chat_user:{ 
-        type: [String],
-        required: true,
-    },
-
+    chat_user: [{
+        userName: { type: String, required: true },  
+        storeName: { type: String, required: false },
+        user_type: { type: String, enum: ['ROLE_USER', 'ROLE_STORE'], required: true } 
+      }],
     //chat_type : 0 - 단체, 1 - 1대1
     chat_type :{
         type: Number,
