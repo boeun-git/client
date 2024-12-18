@@ -33,7 +33,7 @@ const Header = () => {
                   </li>
                 )}
                 <li className="non-side-bar">
-                  <span style={{ fontWeight: 'bold' }} className="text-white me-2">
+                  <span style={{ fontWeight: 'bold' }} className=" me-2">
                     {sessionUserName}
                   </span>
                 </li>

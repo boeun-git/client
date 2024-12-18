@@ -13,6 +13,7 @@ const UserSearch = ({getUserName}) => {
     const userName = searchUser;
     const searchButtonClick = () => {
         if(searchUser) {
+            //axios.get('http://localhost:8080/api-user/getUser', {
             axios.get('http://localhost:8080/api-user/getUser', {
                 params: { username:  userName}  
             })
@@ -73,7 +74,7 @@ const UserSearch = ({getUserName}) => {
                     <div class="input-group " style={{marginTop:'7%'}}>
                         <input type="text" class="form-control searchUser" onChange={searchUserChange} />
                         <div class="input-group-append">
-                            <button className="btn btn-primary" onClick={searchButtonClick}>
+                            <button className="btn " onClick={searchButtonClick} style={{width: "5rem", height: "3rem"}}>
                                 <i className="fas fa-search"></i>
                             </button>
                         </div>

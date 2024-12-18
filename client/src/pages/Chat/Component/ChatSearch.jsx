@@ -17,7 +17,8 @@ const ChatSearch = ({onRoomSelect}) => {
     const searchButtonClick = () => {
         console.log("chatSearch.jsx userName : ", userName);
         if(searchUserName) {
-            axios.get('http://localhost:3001/api/searchChatRoom', {
+            //axios.get('http://localhost:3001/api/searchChatRoom', {
+            axios.get('https://placehere.store/api/searchChatRoom', {
             
                 params: { data:  userName}  
             })

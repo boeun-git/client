@@ -35,7 +35,8 @@ const ChatList = ({ onRoomSelect }) => {
 
     // 채팅방 목록을 불러오는 함수
     const refreshChatRoom = () => {    
-        axios.get('http://localhost:3001/api/getChatRoomList', {
+        //axios.get('http://localhost:3001/api/getChatRoomList', {
+        axios.get('https://placehere.store/api/getChatRoomList', {
             params: { data: userName }
         })
         .then((response) => {
@@ -137,7 +138,7 @@ const ChatList = ({ onRoomSelect }) => {
                                         }}
                                     >
                                         <Stack style={{ margin: '10px' }}>
-                                            <input type="text" value={room.userName.filter(name => name.userName !== userName).map(user=> user.user_type === 'ROLE_STORE' ? user.storeName : user.userName)} style={{border : '0px', fontWeight: 'bold' }} disabled/>
+                                            <input type="text" value={room.userName.filter(name => name.userName !== userName).map(user=> user.user_type === 'ROLE_STORE' ? `${user.storeName} (${user.userName})` : user.userName)} style={{border : '0px', fontWeight: 'bold' }} disabled/>
                                             <br />
                                             {lastMessage}
                                         </Stack>

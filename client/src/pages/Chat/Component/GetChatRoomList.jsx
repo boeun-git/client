@@ -12,7 +12,8 @@ const ListChatRoom = ({onRoomSelect, onRoomType, onRoomUser}) => {
     //const userName = 'userId88';
     useEffect(() => {
         // API 요청
-        axios.get('http://localhost:3001/api/getChatRoomList', {
+        //axios.get('http://localhost:3001/api/getChatRoomList', {
+        axios.get('https://placehere.store/api/getChatRoomList', {
             // URL 파라미터로 userId3을 전달 나중에 userName으로 수정
             params: { data:  userName}  
         })

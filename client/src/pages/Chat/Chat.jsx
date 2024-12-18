@@ -33,7 +33,8 @@ const Chat = () => {
     
             if (!sessionUserName) {
                 //값이 없으면 홈페이지로
-                window.location.href = "http://localhost:8080/";
+                //window.location.href = "http://localhost:8080/"; https://placehere.store/
+                window.location.href = "https://placehere.store/";
                 
             }
         };

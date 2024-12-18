@@ -102,7 +102,17 @@ async function getChatRoomUser(username, chatUserId) {
 
   try {
 
-    const chatRoom = await ChatRoom.find({chat_user: { $all: [userName, chatUserId] }, chat_type : 1});
+  //  const chatRoom = await ChatRoom.find({chat_user: { $all: [userName, chatUserId] }, chat_type : 1});
+  const chatRoom = await ChatRoom.find({
+    chat_user: {
+      $all: [
+        { $elemMatch: { userName: username } },
+        { $elemMatch: { userName: chatUserId } }
+      ]
+    },
+    chat_type: 1
+  });
+
   //   const chatRoom = await ChatRoom.find({
   //     chat_user: {
   //       $elemMatch: { userName: username }  

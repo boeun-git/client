@@ -18,8 +18,8 @@ export const SocketProvider = ({ children, userName }) => {
 
         if (!socketRef.current) {
             // userName이 제공되었을 때만 새 소켓을 연결
-            socketRef.current = io("http://localhost:3001", {
-
+            //socketRef.current = io("http://localhost:3001", {
+            socketRef.current = io("wss://placehere.store", {  //이거로 주석 풀기
                 transports: ['websocket'],
                 query: { userName },
                 reconnection: true,

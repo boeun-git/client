@@ -48,7 +48,8 @@ const AddChatRoom = ({setUser, addRoomId, addRoomUser, addRoomType}) => {
 //        socket.emit('joinUserName', chatUserName, userName);
         if (userName && chatUserName) {
             // POST 요청
-            axios.post('http://localhost:3001/api/addChatRoom', {
+            //axios.post('http://localhost:3001/api/addChatRoom', {
+            axios.post('https://placehere.store/api/addChatRoom', {
                 //나중에 userName, 채팅할 회원 아이디로 수정
                 chat_user: [userName, chatUserName],
                 //chat_user: ['userId1', 'userId3'],
@@ -87,7 +88,8 @@ const AddChatRoom = ({setUser, addRoomId, addRoomUser, addRoomType}) => {
             const chatUserNamesArray = chatUserNames.split(',').map(user => user.trim()); // 공백 제거
             console.log(chatUserNamesArray);
             // POST 요청
-            axios.post('http://localhost:3001/api/addChatRoom', {
+            //axios.post('http://localhost:3001/api/addChatRoom', {
+            axios.post('https://placehere.store/api/addChatRoom', {
                 //나중에 userName, 채팅할 회원 아이디로 수정
                 chat_user: [userName, ...chatUserNamesArray],
                 //chat_user: ['userId1', 'userId3'],
