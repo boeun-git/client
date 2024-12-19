@@ -15,7 +15,7 @@ const CustomDataProvider = {
   getList: (resource, params) => {
 
 
-    const { page, perPage } = params;
+    const { page, perPage } = params.pagination;
     console.log(`React-admin에서 전달받은 페이지 정보: page=${page}, perPage=${perPage}`);
 
     // 일반회원 리스트
@@ -81,27 +81,49 @@ const CustomDataProvider = {
 
       console.log("url chk :: " + url);
 
-      return axios.get(url)
+      // 페이지 정보
+      console.log("react-admin에서 전달받은 페이지 정보 : ", params.pagination);
+
+      console.log(`React-admin에서 전달받은 페이지 정보: ${url}?page=${page}&perPage=${perPage}`);
+
+      return axios.get(url, {
+        params: {
+            page: page,
+            perPage: perPage,
+        },
+      })
           .then((response) => {
               const data = response.data;
 
               console.log("서버에서 가져온 data ::", data);
 
-              const rawData = Array.isArray(data) ? data : data.data;
+            //   const rawData = Array.isArray(data) ? data : data.data;
+            const rawData = Array.isArray(data.data) ? data.data : data;
+            const total = data.total || rawData.length;
 
-              const transformedData = rawData.map((item) => ({
+            // rsrvNo -> id
+            const transformedData = rawData.map((item) => ({
                 id: item.rsrvNo, // React-Admin에서 필요한 id 필드
                 ...item,
             }));
 
-            console.log("transformedData :: ", transformedData);
+            // React-Admin에서 사용할 데이터 형식으로 변환
+            const finalData = {
+                data: transformedData, // 변환된 데이터
+                total: total, // 전체 데이터 수
+            };
 
-              return {
-                  // data: data.data, // 사용자 목록
-                  // total: data.total, // 총 사용자 수
-                  data: transformedData, 
-                  total: transformedData.length
-              };
+            console.log("transformedData :: ", transformedData);
+            console.log("finalData :: ", finalData);
+
+            return finalData;
+
+            //   return {
+            //       // data: data.data, // 사용자 목록
+            //       // total: data.total, // 총 사용자 수
+            //       data: transformedData, 
+            //       total: total
+            //   };
           })
           .catch((error) => {
               console.error("Error ::", error);
@@ -125,7 +147,7 @@ const CustomDataProvider = {
         // React-admin에서 전달받은 페이지 정보
         console.log("react-admin에서 전달받은 페이지 정보 : ", params);
 
-        const { page, perPage } = params.pagination;
+        // const { page, perPage } = params.pagination;
         console.log(`React-admin에서 전달받은 페이지 정보: ${url}?page=${page}&perPage=${perPage}`);
 
 
@@ -150,8 +172,8 @@ const CustomDataProvider = {
             .catch((error) => {
                 console.error("Error ::", error);
                 throw error;
-            });
-    }
+            }); 
+    } // end of getBatchList
 
     return dataProvider.getList(resource, params);
 }, // end getList
