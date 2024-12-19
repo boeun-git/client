@@ -54,7 +54,13 @@ const CustomDataProvider = {
         const url = `http://localhost:8080/api-admin/getStoreList`;
         // const url = `https://placehere.store/api-admin/getStoreList`;
 
-        return axios.get(url)
+        return axios.get(url, {
+
+            params: {
+                page: page,
+                perPage: perPage,
+            },
+        })
             .then((response) => {
                 const data = response.data;
 
@@ -173,7 +179,7 @@ const CustomDataProvider = {
                 console.error("Error ::", error);
                 throw error;
             }); 
-    } // end of getBatchList
+    } // 배치 리스트 끝
 
     return dataProvider.getList(resource, params);
 }, // end getList

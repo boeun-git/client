@@ -1,5 +1,5 @@
 import React from 'react'
-import { Datagrid, EmailField, List, TextField } from 'react-admin';
+import { Datagrid, EmailField, List, Pagination, TextField } from 'react-admin';
 // import SimpleButton from './SimpleButton';
 
 export const StoreList = (props) => {
@@ -8,7 +8,7 @@ export const StoreList = (props) => {
 
 return (
 
-  <List {...props}>
+  <List {...props} perPage={10} pagination={<Pagination />} >
         <Datagrid>
             {/* <TextField source="id" label="번호" /> */}
             <TextField source="username" label="아이디" />
