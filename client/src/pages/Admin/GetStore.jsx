@@ -9,7 +9,7 @@ export const GetStore = (props) => (
             <TabbedShowLayout.Tab label="사용자 정보">
                 <TextField source="username" label="아이디" />
                 <EmailField source="email" label="이메일" />
-                <DateField source="regDt" label="가입일" />
+                <TextField source="regDt" label="가입일" />
                 <TextField source="activeStatus" label="활동상태" />
             </TabbedShowLayout.Tab>
 

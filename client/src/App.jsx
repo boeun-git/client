@@ -9,6 +9,7 @@ import { GetStore } from './pages/Admin/GetStore';
 import { RsrvList } from './pages/Admin/RsrvList';
 import { GetRsrv } from './pages/Admin/GetRsrv';
 import Chat from './pages/Chat/Chat';
+import { BatchList } from './pages/Admin/BatchList';
 
 const App = () => (
 
@@ -37,6 +38,11 @@ const App = () => (
               list={RsrvList} 
               show={GetRsrv} 
               options={{ label: '예약 목록' }} 
+            />
+            <Resource 
+              name="getBatchList" 
+              list={BatchList} 
+              options={{ label: '배치 목록' }} 
             />
           </Admin>
         }
