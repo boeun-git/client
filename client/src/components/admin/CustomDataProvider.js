@@ -16,6 +16,7 @@ const CustomDataProvider = {
 
 
     const { page, perPage } = params.pagination;
+
     console.log(`React-admin에서 전달받은 페이지 정보: page=${page}, perPage=${perPage}`);
 
     // 일반회원 리스트
@@ -28,7 +29,14 @@ const CustomDataProvider = {
         // const url = `https://placehere.store/api-admin/getUserList`;
         
 
-        return axios.get(url)
+        return axios.get(url, {
+            params: {
+                page: page,
+                perPage: perPage,
+            },
+        }
+
+        )
             .then((response) => {
                 const data = response.data;
 

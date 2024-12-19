@@ -1,4 +1,4 @@
-import { Datagrid, EmailField, List, ReferenceField, TextField } from 'react-admin';
+import { Datagrid, EmailField, List, Pagination, ReferenceField, TextField } from 'react-admin';
 // import { List, SimpleList } from 'react-admin';
 
 // userList를 사용자 커스텀이 가능하게 만들어준다!!
@@ -8,7 +8,7 @@ import { Datagrid, EmailField, List, ReferenceField, TextField } from 'react-adm
 export const UserList = (props) => (
 
 
-    <List {...props}>
+    <List {...props} perPage={10} pagination={<Pagination />} >
         <Datagrid>
             <TextField source="username" label="아이디" />
             {/* <ReferenceField source="username" label="아이디" /> */}
