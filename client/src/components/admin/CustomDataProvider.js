@@ -198,8 +198,33 @@ const CustomDataProvider = {
     console.log('resource - getOne ', resource);
     console.log('params - getOne ', params);
 
-    // 이전 resource
-    // 예시, getUserList, getStoreList, getRsrvList
+    // 일반회원 리스트
+    if (resource === "getUserList") {
+
+        console.log("resource :: ", resource);
+        console.log("params :: ", params);
+  
+        const url = `http://localhost:8080/api-admin/getUser?id=${params.id}`;
+      //   const url = `https://placehere.store/api-admin/getUser?id=${params.id}`;
+  
+  
+        return axios
+              .get(url)
+              .then((response) => {
+                  const data = response.data;
+                  console.log("getUser Data :: ", data);
+  
+                  return {
+                      data: { id: params.id, ...data }, // id 필드는 필수
+                  };
+              })
+              .catch((error) => {
+                  console.error("Error fetching details: ", error);
+                  throw error;
+              });
+      }
+
+    // 점주회원 리스트
     if (resource === "getStoreList") {
 
       console.log("resource :: ", resource);
