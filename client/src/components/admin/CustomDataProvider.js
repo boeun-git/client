@@ -156,7 +156,7 @@ const CustomDataProvider = {
         console.log(params);
 
         // const url = `http://localhost:8080/api-admin/getBatchList`;
-        const url = `https://placehere.store/api-admin/getUserList`;
+        const url = `https://placehere.store/api-admin/getBatchList`;
         
         console.log(url);   // http://localhost:8080/api-admin/getBatchList
         
