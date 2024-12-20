@@ -1,8 +1,7 @@
-import { Datagrid, DateField, EmailField, FunctionField, List, Pagination, ReferenceField, TextField, TextInput } from 'react-admin';
+import { Datagrid, DateField, EmailField, Filter, FunctionField, List, Pagination, ReferenceField, TextField, TextInput } from 'react-admin';
 // import { List, SimpleList } from 'react-admin';
 
 // userList를 사용자 커스텀이 가능하게 만들어준다!!
-
 
 // props를 넘겨받아 부모 컴포너느로 부터 제공된 데이터와 설정을 활용한다.
 // 괄호에 props 입력해줘야 한다.
