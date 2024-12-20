@@ -1,9 +1,15 @@
 import React from "react";
-import { Datagrid, DateField, FunctionField, List, Pagination, TextField } from "react-admin";
+import { Datagrid, DateField, Filter, FunctionField, List, Pagination, TextField, TextInput } from "react-admin";
+
+const UserFilter = (props) => (
+    <Filter {...props}>
+        <TextInput label="아이디" source="username" alwaysOn />
+    </Filter>
+);
 
 export const RsrvList = (props) => (
 
-    <List {...props} perPage={10} pagination={<Pagination />} >
+    <List {...props} perPage={10} pagination={<Pagination />} filters={<UserFilter />} >
         <Datagrid bulkActionButtons={false}>
             <TextField source="rsrvNo" label="예약번호" /> 
             {/* <TextField source="storeId" label="가게번호" />  */}

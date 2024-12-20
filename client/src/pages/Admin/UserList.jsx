@@ -1,14 +1,16 @@
 import { Datagrid, DateField, EmailField, Filter, FunctionField, List, Pagination, ReferenceField, TextField, TextInput } from 'react-admin';
-// import { List, SimpleList } from 'react-admin';
 
-// userList를 사용자 커스텀이 가능하게 만들어준다!!
+const UserFilter = (props) => (
+    <Filter {...props}>
+        <TextInput label="아이디" source="username" alwaysOn />
+    </Filter>
+);
 
-// props를 넘겨받아 부모 컴포너느로 부터 제공된 데이터와 설정을 활용한다.
 // 괄호에 props 입력해줘야 한다.
 export const UserList = (props) => (
 
 
-    <List {...props} perPage={10} pagination={<Pagination />}  >
+    <List {...props} perPage={10} pagination={<Pagination />} filters={<UserFilter />} >
         <Datagrid bulkActionButtons={false}>
             <TextField source="username" label="아이디" />
             {/* <ReferenceField source="username" label="아이디" /> */}

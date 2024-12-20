@@ -14,8 +14,8 @@ const CustomDataProvider = {
   // 일반 회원 목록 조회 (getList)
   getList: (resource, params) => {
 
-
     const { page, perPage } = params.pagination;
+    const { username, batchName } = params.filter;
 
     console.log(`React-admin에서 전달받은 페이지 정보: page=${page}, perPage=${perPage}`);
 
@@ -33,6 +33,7 @@ const CustomDataProvider = {
             params: {
                 page: page,
                 perPage: perPage,
+                username: username
             },
         }
 
@@ -67,6 +68,7 @@ const CustomDataProvider = {
             params: {
                 page: page,
                 perPage: perPage,
+                username: username
             },
         })
             .then((response) => {
@@ -104,6 +106,7 @@ const CustomDataProvider = {
         params: {
             page: page,
             perPage: perPage,
+            username: username
         },
       })
           .then((response) => {
@@ -170,6 +173,7 @@ const CustomDataProvider = {
             params: {
                 page: page,
                 perPage: perPage,
+                batchName: batchName
             },
         })
 

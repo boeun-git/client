@@ -1,9 +1,15 @@
 // src/UserShow.js
 import React from "react";
-import { TextField, List, Datagrid, DateField, Pagination } from "react-admin";
+import { TextField, List, Datagrid, DateField, Pagination, Filter, TextInput } from "react-admin";
+
+const UserFilter = (props) => (
+  <Filter {...props}>
+      <TextInput label="배치이름" source="batchName" alwaysOn />
+  </Filter>
+);
 
 export const BatchList = (props) => (
-  <List {...props} perPage={10} pagination={<Pagination />} >
+  <List {...props} perPage={10} pagination={<Pagination />} filters={<UserFilter />} >
     <Datagrid bulkActionButtons={false}>
           <TextField source="id" label="배치번호" />
           <TextField source="batchName" label="배치 이름" />

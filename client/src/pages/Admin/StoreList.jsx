@@ -1,6 +1,13 @@
 import React from 'react'
-import { Datagrid, DateField, EmailField, FunctionField, List, Pagination, TextField } from 'react-admin';
+import { Datagrid, DateField, EmailField, Filter, FunctionField, List, Pagination, TextField, TextInput } from 'react-admin';
 // import SimpleButton from './SimpleButton';
+
+
+const UserFilter = (props) => (
+    <Filter {...props}>
+        <TextInput label="아이디" source="username" alwaysOn />
+    </Filter>
+);
 
 export const StoreList = (props) => {
 
@@ -8,7 +15,7 @@ export const StoreList = (props) => {
 
 return (
 
-  <List {...props} perPage={10} pagination={<Pagination />} >
+  <List {...props} perPage={10} pagination={<Pagination />} filters={<UserFilter />} >
         <Datagrid bulkActionButtons={false}>
             <TextField source="username" label="아이디" />
             <EmailField source="email" label="이메일" />
