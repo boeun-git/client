@@ -15,6 +15,7 @@ CDBListGroupItem{
 
 /* 기본 스타일 */
 .CDBListGroupItem {
+  
     margin:0; padding:0;
     height: 7rem;
     display: flex;

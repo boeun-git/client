@@ -14,7 +14,7 @@ const UserSearch = ({getUserName}) => {
     const searchButtonClick = () => {
         if(searchUser) {
             //axios.get('http://localhost:8080/api-user/getUser', {
-            axios.get('http://localhost:8080/api-user/getUser', {
+            axios.get('https://placehere.store/api-user/getUser', {
                 params: { username:  userName}  
             })
             //axios.get('http://localhost:8080/api-user/getUserList')
@@ -67,14 +67,14 @@ const UserSearch = ({getUserName}) => {
 
     return (
     <CDBContainer style={{width: "25rem", margin:'0', padding:'0' , borderColor:'#A6A6A6'}}>
-        <CDBListGroup style={{margin:'0', padding:'0', width: "25rem", borderRadius: '0' }}>
+        <CDBListGroup style={{margin:'0', padding:'0', width: "25rem", borderRadius: '0', border:'0px' }}>
             {/* 채팅 검색(상대방 userName으로 검색) */}
-            <CDBListGroupItem style={{ height: "7rem" , borderColor:'#A6A6A6'}}>
+            <CDBListGroupItem style={{ height: "7rem" , borderBottom:'1px solid #A6A6A6'}}>
                 <div class=" ">
                     <div class="input-group " style={{marginTop:'7%'}}>
-                        <input type="text" class="form-control searchUser" onChange={searchUserChange} />
+                        <input type="text" class="form-control searchUser" onChange={searchUserChange}  style={{ borderColor:'#A6A6A6',  borderRadius: '7px' }}/>
                         <div class="input-group-append">
-                            <button className="btn " onClick={searchButtonClick} style={{width: "5rem", height: "3rem"}}>
+                            <button className="btn " onClick={searchButtonClick} >
                                 <i className="fas fa-search"></i>
                             </button>
                         </div>
@@ -83,16 +83,16 @@ const UserSearch = ({getUserName}) => {
             </CDBListGroupItem>
         </CDBListGroup>
         <CDBListGroup 
-            style={{ 
-                width: "25rem", 
-                borderRadius: '0', 
-                overflowY: "auto", 
-                maxHeight: "74vh" // 높이를 고정시켜서 스크롤이 발생하도록 합니다.
-            }}
-        >
+                style={{ 
+                    width: "25rem", 
+                    borderRadius: '0', 
+                    overflowY: "auto", 
+                    maxHeight: "68vh",
+                }}
+            >
             <div className="flex-1" style={{ overflowY: "auto" }}>
             {(searchUserResult.length === 0 ) ? (
-                    <CDBListGroupItem style={{ textAlign: 'center', height: "74vh", borderColor:'#A6A6A6'}}>
+                    <CDBListGroupItem style={{ textAlign: 'center', height: "67vh", border:'0px'}}>
                         <p style={{verticalAlign: 'middle', marginTop:'50%'}}><b>입력한 내용에 해당되는 회원이 없습니다.</b></p>
                     </CDBListGroupItem>     
             ) : (            

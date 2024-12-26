@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import { SocketProvider } from './Socket';
 import ChatRoomList from './Component/ChatList';
 import ChatRoomListBar from './Component/ChatRoomListBar';
-//import SendChatMsg from './Component/SendChatMsg';
+import SendChatMsg from './Component/SendChatMsg';
 //import SendChatMsg from './Component/sendmsg';
 //import SendChatMsg from './Component/sendmsgtest.jsx';
-import SendChatMsg from './Component/sendsend.jsx';
+//import SendChatMsg from './Component/sendsend.jsx';
 import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
 import "../../style/chat/Chat.css";
@@ -15,12 +15,15 @@ import UserSearch from './Component/UserSearch';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../../Header';
 import ChatSpinner from './Component/Spinner.jsx';
+import axios from 'axios';
 
 const Chat = () => {
     // react/chat?name=username&role=userrole
     const queryParams = new URLSearchParams(useLocation().search);
     const name = queryParams.get('name');
-    const role = queryParams.get('role');  
+    const role = queryParams.get('role') || '';
+    const storeId = queryParams.get('storeId');
+    const [clickStoreName, setClickStoreName] = useState(null); 
 
     useEffect(() => {
 
@@ -30,38 +33,53 @@ const Chat = () => {
     
             setLoginUserName(sessionUserName);
             setLoginUserRole(sessionUserRole);
-    
-            if (!sessionUserName) {
+            
+            //가게상세페이지에서 채팅으로 넘어왔을 때
+            if(storeId !== null && storeId.length > 0){
+                //axios.get('http://localhost:8080/api-store/getStore',{
+                axios.get('https://placehere.store/api-store/getStore', {
+                    params: { storeId:  storeId}  
+                })
+                .then((response) => {
+                    // 서버로부터 받은 데이터 처리
+                    setClickRoomUser( response.data.userName);
+                    setClickStoreName(response.data.storeName);
+                    console.log('initUser storeName : ', clickStoreName);
+                    //list 결과로 onoff 확인하는 것 추가하기
+                    console.log('Array.isArray(clickStoreName) : ', Array.isArray(clickStoreName));
+                    setClickRoomType(1);
+                    setShowSendChatMsg(true);
+                })
+                .catch((error) => {
+                    setClickStoreName();
+                    console.error('Error group addChatRoom.js : ', error);
+                });
+            }
+            
+            if (!sessionUserName || sessionUserName === null) {
                 //값이 없으면 홈페이지로
                 //window.location.href = "http://localhost:8080/"; https://placehere.store/
                 window.location.href = "https://placehere.store/";
                 
             }
+            
         };
     
         initUser();
     }, []);
 
+
+
+
     
-    // 선택된 방의 ID, 방 ID
-    //const [selectedRoomId, setSelectedRoomId] = useState(null); 
+
 	const [clickRoomId, setClickRoomId] = useState(null); 
-    // 선택된 방의 type, 방 type 
-    //const [selectedRoomType, setSelectedRoomType] = useState(null); 
 	const [clickRoomType, setClickRoomType] = useState(null); 
-    // 선택된 방의 user
-    //const [selectedRoomUser, setSelectedRoomUser] = useState(null); 
 	const [clickRoomUser, setClickRoomUser] = useState(null); 
-    
     const [loginUserName, setLoginUserName] = useState(null); 
     const [loginUserRole, setLoginUserRole] = useState(null);     
-    // 선택한 사이드바
     const [menuName, setMenuName] = useState(null); 
-    // 가게 userName
-    //const [storeName, setStoreName] = useState(null); 
-	const [clickStoreName, setClickStoreName] = useState(null); 
     const [showSendChatMsg, setShowSendChatMsg] = useState(false);
-    //const [chatRole, setChatRole] = useState(null);
 	const [clickRoomUserRole, setClickRoomUserRole] = useState(null);
 
     // sessionStorage
@@ -84,12 +102,6 @@ const Chat = () => {
 
     // 채팅목록 - 채팅방 선택했을 때 - ChatRoomList,
     const handleRoomSelect = (roomId, users, type, usersType, store) => {
-        //setSelectedRoomId(roomId);
-        //setSelectedRoomUser(users); 
-        //setSelectedRoomType(type); 
-        //setChatRole(usersType);
-        //setStoreName(store);
-        //setShowSendChatMsg(true);
         setClickRoomId(roomId);
         setClickRoomUser(users); 
         setClickRoomType(type);
@@ -99,15 +111,7 @@ const Chat = () => {
 
     };
 
-    useEffect(() => { //clickRoomId
-        //console.log("useEffect start ====================", selectedRoomId);
-        //console.log("useEffect\n Selected Room ID:", selectedRoomId);
-        //console.log("Selected Room Users:", selectedRoomUser);
-        //console.log("Selected Room Type:", selectedRoomType);
-        //console.log("Selected usersType:", chatRole);
-        //console.log("Selected storeName:", storeName);
-        //console.log("useEffect end ====================", selectedRoomId);
-
+    useEffect(() => { 
         console.log("useEffect start ====================", clickRoomId);
         console.log("Selected Room ID:", clickRoomId);
         console.log("Selected Room Users:", clickRoomUser);
@@ -115,7 +119,6 @@ const Chat = () => {
         console.log("Selected clickRoomUserRole:", clickRoomUserRole);
         console.log("Selected clickStoreName:", clickStoreName);
         console.log("useEffect end ====================", clickRoomId);        
-    //}, [selectedRoomId, selectedRoomUser, selectedRoomType, chatRole, storeName]);
     }, [clickRoomId, clickRoomUser, clickRoomType, clickRoomUserRole, clickStoreName]);
     
     const handleRoomUser = (users) =>{
@@ -126,8 +129,6 @@ const Chat = () => {
       }    
 
     const handleRoomType = (type) => {
-    //   setSelectedRoomType(type); 
-    //   console.log("selectedRoomType : ", selectedRoomType);
         setClickRoomType(type); 
         console.log("selectedRoomType : ", clickRoomType);
     };
@@ -147,13 +148,6 @@ const Chat = () => {
 
         //1초
         setTimeout(() => {
-            //setSelectedRoomUser(Object.values(selectedRoomUser)); 
-            // setSelectedRoomUser(Id);
-            // setShowSendChatMsg(true);
-            // setSelectedRoomId("");
-            // setSelectedRoomType(1);
-            // setStoreName(Name);
-            // setChatRole("ROLE_STORE");
             setClickRoomUser(Id);
             setShowSendChatMsg(true);
             setClickRoomId("");
@@ -166,16 +160,11 @@ const Chat = () => {
 
     }
 
-    // useEffect(() => {
-    //     console.log("Updated storeName:", storeName);
-    // }, [storeName]);
     useEffect(() => {
         console.log("Updated storeName:", clickStoreName);
     }, [clickStoreName]);
 
     const clickUser = (getUserName) => {
-
-        //setUserName(getUserName);
 
         if(getUserName === null){
             return <ChatSpinner/>
@@ -183,29 +172,6 @@ const Chat = () => {
 
         setTimeout(() => {
             console.log("clickUser getUserName: ", getUserName);
-
-            //setSelectedRoomUser(getUserName);
-            //setSelectedRoomUser(Object.values(selectedRoomUser)); 
-            //console.log("clickUser selectedRoomUser: ", selectedRoomUser);
-            //setSelectedRoomId("");
-
-            // if (Array.isArray(getUserName)) {
-            //     if(getUserName.length === 1){
-            //         setSelectedRoomType(1);
-            //     }else{
-            //     setSelectedRoomType(0);
-            //     }
-            // } else {
-            //     setSelectedRoomType(1);
-            // }
-            
-            // setChatRole("ROLE_USER");            
-            // //selectedRoomUser.toCharArray()
-            // console.log("clickUser selectedRoomUser: ", selectedRoomUser);
-            
-            // setShowSendChatMsg(true);
-            // //setShowSendChatMsg(false);
-            // console.log("clickUser selectedRoomUser: ", selectedRoomUser);
 
             setClickRoomUser(getUserName);
             console.log("clickUser clickRoomUser: ", clickRoomUser);
@@ -237,9 +203,9 @@ const Chat = () => {
 
     return (
         <div className='body' >
-            <div className='head'>
+            {/* <div className='head'> */}
                 <Header/>
-            </div>
+            {/* </div> */}
             <div className='chat-container' >
                 
                 <SocketProvider userName={name}>
@@ -248,7 +214,7 @@ const Chat = () => {
                         <div style={{ height: '100%', marginTop : '0' }}>
                             <ChatRoomListBar className='sidebar' menuName={clickMenuName}/>
                         </div>
-                        <div style={{ height: '86vh', marginTop : '0' , border:'1px solid #A6A6A6'}}>
+                        <div style={{ height: '88.5vh', marginTop : '0' , borderRight:'0', borderBottom:'1px solid #A6A6A6', borderTop:'1px solid #4880FF'}}>
                             {(menuName === null || menuName === 'chatRoomList' )  && 
                             <ChatRoomList onRoomSelect={handleRoomSelect} />}
                             {menuName === 'chatRoomSearch' && 
@@ -258,21 +224,21 @@ const Chat = () => {
                             {menuName === 'userSearch' && 
                             <UserSearch getUserName={clickUser}/>}
                         </div>
-                        <div style={{ width:'100%', height: '86vh', marginTop : '0' , border:'1px solid #A6A6A6'}}>
-                        {/* {showSendChatMsg === true  && 
-                            <SendChatMsg 
-                                roomId={selectedRoomId} 
-                                type={selectedRoomType} 
-                                users={selectedRoomUser}
-                                usersRole={chatRole}
-                                storeName={storeName}
-                                userName={loginUserName} />} */}
-                        {showSendChatMsg === true  && 
+                        <div style={{ width:'100%', height: '88.5vh', marginTop : '0' , border:'1px solid #A6A6A6', borderTop:'1px solid #4880FF'}}>
+                        {showSendChatMsg === true && (storeId === null || storeId.length === 0)  && 
                             <SendChatMsg 
                                 roomId={clickRoomId} 
                                 type={clickRoomType} 
                                 users={clickRoomUser}
                                 usersRole={clickRoomUserRole}
+                                storeName={clickStoreName}
+                                userName={loginUserName} />}
+                        {showSendChatMsg === true && storeId && 
+                            <SendChatMsg 
+                                roomId= {null}
+                                type={clickRoomType}
+                                users={clickRoomUser}
+                                usersRole='ROLE_STORE'
                                 storeName={clickStoreName}
                                 userName={loginUserName} />}
                         </div>                        

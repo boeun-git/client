@@ -16,7 +16,7 @@ const Sidebar = ({ menuName }) => {
   const role = sessionStorage.getItem("role");
 
   return (
-    <div style={{margin:'0', padding:'0', display: 'flex', height: '86vh', marginTop:'0' }}>
+    <div style={{margin:'0', padding:'0', display: 'flex', height: '88.5vh', marginTop:'0' }}>
       <CDBSidebar
         textColor="#fff"
         backgroundColor="#4880FF"

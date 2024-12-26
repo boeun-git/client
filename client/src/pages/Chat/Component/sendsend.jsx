@@ -27,28 +27,25 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
   const [post, setPost] = useState("");
   const [preTime, setPreTime] = useState([]);  
   const [time, setTime] = useState([]);  
+  const [isInputDisabled, setIsInputDisabled] = useState(false);
 
   const [sendRoomId, setSendRoomId] = useState("");
   //setSendRoomId(roomId);
   console.log("sendRoomId : ", sendRoomId);
-  const messageEndRef = useRef(null); // 이 ref를 사용하여 스크롤 끝으로 이동합니다.
-  // 저장된 사용자 이름 가져오기
-  // localStorage에서 가져오기
-  //const userName = localStorage.getItem("userName");
-  // sessionStorage에서 가져오기
-
+  const messageEndRef = useRef(null);
   const userName = sessionStorage.getItem("userName");
   const role = sessionStorage.getItem("role");
 
   useEffect(() => {
     console.log('chatUser post updated : ', post);
-  }, [post]); // post 상태가 변경될 때마다 실행됩니다.
+  }, [post]);
 
   useEffect(() => {
 
+    if (sendRoomId !== null && sendRoomId.length > 1){
                 axios
                 //.get("http://localhost:3001/api/getChatMsg", {
-                  .get("https://placehere.store/api/getChatMsg", {
+                .get("https://placehere.store/api/getChatMsg", {
                 // URL 파라미터로 userId3을 전달 나중에 userName으로 수정
                 params: { roomId: sendRoomId, userName: userName},
                 })
@@ -59,6 +56,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
                 
                 const msgTypes = response.data.data.map((item) => item.msg_type);
                 setPreMsgType(msgTypes);
+
                 const msgTime = response.data.data.map((item) => item.msg_dt);
                 setPreTime(msgTime);
         
@@ -72,7 +70,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
                 console.error("Error getChatRoomList.js : ", error);
                 //console.log("response.data.data : ", response.data.data);
                 });        
-                      
+              }
   },[sendRoomId]);
 
   useEffect(() => {
@@ -82,14 +80,13 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
     console.log("send socketid", socket);
     console.log("send sendRoomId", sendRoomId);
     console.log("send roomId", roomId);
-    console.log("send roomId", roomId.length);
+    //console.log("send roomId", roomId.length);
     // API 요청
-    if ( roomId.length > 1){
+    if ( roomId != null && roomId.length > 1){
         console.log("notnull sendRoomId : ", sendRoomId);
       axios
         //.get("http://localhost:3001/api/getChatMsg", {
         .get("https://placehere.store/api/getChatMsg", {
-          // URL 파라미터로 userId3을 전달 나중에 userName으로 수정
           params: { roomId: roomId, userName: userName},
         })
         .then((response) => {
@@ -117,9 +114,14 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
     
     // 1대1
     if(type === 1){
+      console.log('users : ', users, "Array.isArray(users)", Array.isArray(users));
       if(Array.isArray(users)){
         users = users[0] ;
         usersRole = usersRole[0];
+      }
+
+      if(Array.isArray(storeName)){
+        storeName = storeName[0] ;
       }
 
     //axios.post('http://localhost:3001/api/addChatRoom', {
@@ -154,7 +156,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
         else if (response.data.data[0]._id) {
             //roomId = response.data.data[0]._id.toString();
             setSendRoomId(response.data.data[0]._id);
-            console.log('Found _id in data array:', sendRoomId);         
+            console.log('Found _id in data array:', sendRoomId);
         } 
         else {
             // 두 조건에 해당하지 않는 경우 처리
@@ -171,9 +173,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
 
     }else{
       console.log('type 0 - users : ' , users);
-      //const chatUserNamesArray = users.split(',').map(user => user.trim()); // 공백 제거
-      //console.log(chatUserNamesArray);
-      // // POST 요청
+      
+      
       //axios.post('http://localhost:3001/api/addChatRoom', {
       axios.post('https://placehere.store/api/addChatRoom', {
           //나중에 userName, 채팅할 회원 아이디로 수정
@@ -192,9 +193,9 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
 
       })
       .catch((error) => {
-        console.log("socket : ", socket.id);
-          console.error('Error group addChatRoom.js : ', error);
-          setOnoff(error.response.data.data);
+        //console.log("socket : ", socket.id);
+        console.error('Error group addChatRoom.js : ', error);
+        setOnoff(error.response.data.data);
       });
     }
   }, [roomId]);
@@ -217,20 +218,27 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
         socket.off("receiveimage");
         
         socket.on("receiveMessage", (room, msg, chatUserName, msg_type, msg_time) => {
-          console.log("Received message:", msg, "From:", chatUserName);
+          console.log("Received message:", msg, "From:", chatUserName, "time : ", msg_time);
           
           setRoom(room);
           setChatUserName((prevChatUserName) => [...prevChatUserName, chatUserName]);
           setReceiveMsg((prevMsg) => [...prevMsg, msg]);
           setMsgType((preMsgType) => [...preMsgType, msg_type]);
+            // 메시지 시간을 'Asia/Seoul' 타임존으로 변환
+            // const date = new Date(msg_time);
+            // const koreanTime = date.toLocaleString("ko-KR", {
+            //   timeZone: "Asia/Seoul",
+            // });             
+            //console.log("Received message:", msg, "From:", chatUserName, "koreanTime : ", koreanTime);
           setTime((preTime) => [...preTime, msg_time]);
-
+          console.log("receiveMsg preTime:", preTime);
+          console.log("receiveMsg msg_time:", msg_time);
+          console.log("receiveMsg time:", time);
             console.log("receiveMsg Received message:", receiveMsg);
           
 
             //axios.get("http://localhost:3001/api/chkMsg", {
             axios.get("https://placehere.store/api/chkMsg", {
-                // URL 파라미터로 userId3을 전달 나중에 userName으로 수정
                 params: { roomId: room, userName: userName},
             })
             .then((response) => {
@@ -244,7 +252,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
 
         });
 
-        socket.on("receiveimage", (room, msg, chatUserName, room_type, msg_type, msg_time ) => {
+        //io.to(roomId).emit('receiveimage', roomId, imageUrl, sendUser, room_type, msg_type, chatUsers, today.toLocaleString());
+        socket.on("receiveimage", (room, msg, chatUserName, room_type, msg_type, chatUsers, msg_time ) => {
             console.log("Received image:", msg, "From:", chatUserName);
             //setReceivedMessage((prevReceivedMessage) => [...prevReceivedMessage, msg]);
             setRoom(room);
@@ -252,10 +261,15 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
             setReceiveMsg((prevMsg) => [...prevMsg, msg]);
             setReceiveImg(msg);
             setMsgType((preMsgType) => [...preMsgType, msg_type]);
+            // 메시지 시간을 'Asia/Seoul' 타임존으로 변환
+            // const date = new Date(msg_time);
+            // const koreanTime = date.toLocaleString("ko-KR", {
+            //   timeZone: "Asia/Seoul",
+            // });              
             setTime((preTime) => [...preTime, msg_time]);
 
-            //axios.get("http://localhost:3001/api/chkMsg", {
-            axios.get("https://placehere.store/api/chkMsg", {
+            axios.get("http://localhost:3001/api/chkMsg", {
+            //axios.get("https://placehere.store/api/chkMsg", {
                 // URL 파라미터로 userId3을 전달 나중에 userName으로 수정
                 params: { roomId: room, userName: userName},
             })
@@ -284,15 +298,16 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
     }
   }, [receiveMsg, preReceiveMsg]); 
 
+  const fileChange = (e) =>{
+    const file = e.target.files[0];
+    setImageName(e.target.files[0]);
+    setMsg(file.name);
+    setIsInputDisabled(true);
+  }
+
   const sendMsg = () => {
 
-    if(msg.length > 0){
-
-      socket.emit("sendMsg", sendRoomId, msg, userName, type, 0, users);
-      console.log("sendMsg: ", sendRoomId, msg, userName, type, 0, users);
-      setMsg("");
-
-    }else if(imageName !== null){
+    if(imageName !== null){
 
       const imgEx = imageName.name.split('.').pop().toLowerCase();
       const imageExtensions = ['png', 'jpeg', 'jpg'];
@@ -310,25 +325,35 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
           const fileName = imageName.name;
           socket.emit('image', roomId, imgBuffer, userName, type, fileType, users, fileName);
       };
-      reader.readAsArrayBuffer(imageName);      
+      reader.readAsArrayBuffer(imageName); 
+      setIsInputDisabled(false);
+      setImageName("");
+      setMsg("");
+
+    }else if(msg.length > 0){
+
+      socket.emit("sendMsg", sendRoomId, msg, userName, type, 0, users);
+      console.log("sendMsg: ", sendRoomId, msg, userName, type, 0, users);
+      setMsg("");
+
     }
   };
 
   return (
     
-    <div className=" h-screen flex flex-col  " style={{height : "76vh"}}  >
+    <div className=" h-screen flex flex-col  " 
+    style={{height : "88vh"}}>
 
       {/* <div className="border h-screen flex flex-col max-w-lg mx-auto" style={{height : "76vh"}} > */}
-      <div class="bg-blue-500 p-4 text-white flex justify-between items-center">
+      <div class="bg-blue-500 p-4 text-white flex justify-between items-center" style={{height : "10vh", backgroundColor:"#4880FF"}}>
         <span><b>{/*users.join(', ')*/ (usersRole[0]==="ROLE_USER" || usersRole === "ROLE_USER") ? users : storeName }</b></span>
       </div>
       <div className="border relative inline-block text-left" >
         <div
           className="flex-1 overflow-y-auto p-4"
-          style={{ height: "68vh", overflowY: "auto"/**/ }}
-        >
+          style={{ height: "68vh", overflowY: "auto"/**/ }}>
           {/* 여기에 스크롤을 추가하려면 div를 사용 */}
-          <div className="flex flex-col space-y-2"  >
+          <div className="flex flex-col space-y-2" >
             {preReceiveMsg.map((room, index) => {
               // 메시지 시간을 'Asia/Seoul' 타임존으로 변환
               const date = new Date(room.msg_dt);
@@ -346,9 +371,9 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
                               room.msg_type === 0 ? (
                                 room.msg
                               ) : room.msg_type === 1 ? (
-                                <img src={`https://placehere-bucket.s3.ap-northeast-2.amazonaws.com/chat/${room.msg}`} alt="message" />
+                                <img src={`https://placehere-bucket.s3.ap-northeast-2.amazonaws.com/chat/${room.msg}`} alt="message"  style={{ width:"200px", height:"200px"  ,objectFit:"scale-down"}} />
                               ) : (
-                                <video src={`https://placehere-bucket.s3.ap-northeast-2.amazonaws.com/chat/${room.msg}`} controls />
+                                <video src={`https://placehere-bucket.s3.ap-northeast-2.amazonaws.com/chat/${room.msg}`} controls style={{width:"300px", height:"150px", objectFit:"scale-down"}} />
                               )
                             }
                             </div>
@@ -363,7 +388,15 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
                             <div className="text-black">
                                 <p className="text-xs"> {(usersRole[0] === "ROLE_STORE" || usersRole === "ROLE_STORE" )? storeName : room.sender_id }</p>
                                 <div className="bg-gray-300 text-black p-2 rounded-lg max-w-xs">
-                                    {room.msg}
+                                {
+                              room.msg_type === 0 ? (
+                                room.msg
+                              ) : room.msg_type === 1 ? (
+                                <img src={`https://placehere-bucket.s3.ap-northeast-2.amazonaws.com/chat/${room.msg}`} alt="message"  style={{ width:"200px", height:"200px"  ,objectFit:"scale-down"}} />
+                              ) : (
+                                <video src={`https://placehere-bucket.s3.ap-northeast-2.amazonaws.com/chat/${room.msg}`} controls style={{width:"300px", height:"150px", objectFit:"scale-down"}} />
+                              )
+                            }
                                 </div>
                             </div>
                         </div>
@@ -380,17 +413,20 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
 
              {receiveMsg.map(
               (msg, index) =>
+                
               room === sendRoomId && (
+                
                   chatUserName[index] === userName ? (
+
                     <div key={index} className="mb-4">
                         <div className="flex justify-end">
                             <div className="bg-blue-200 text-black p-2 rounded-lg max-w-xs">
                             {msgType[index] === 0 ? (
                                   msg
                               ) : msgType[index] === 1 ? (
-                                <img src={msg} alt="message" />
+                                <img src={msg} alt="message"  style={{ width:"200px", height:"200px"  ,objectFit:"scale-down"}} />
                               ) : (
-                                <video src={msg} controls />
+                                <video src={msg} controls style={{width:"300px", height:"150px", objectFit:"scale-down"}} />
                               )
                             }
                             </div>
@@ -408,9 +444,9 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
                              {msgType[index] === 0 ? (
                                     msg
                                 ) : msgType[index] === 1 ? (
-                                  <img src={msg} alt="message" />
+                                  <img src={msg} alt="message" style={{ width:"200px", height:"200px"  ,objectFit:"scale-down"}} />
                                 ) : (
-                                  <video src={msg} controls />
+                                  <video src={msg} controls style={{width:"320px", height:"150px", objectFit:"scale-down"}} />
                                 )
                               }
                                 </div>
@@ -427,7 +463,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
           </div>
         </div>
       {(onoff !== 'offline') ? (
-        <div className="bg-white p-4 flex items-center">
+        <div className="bg-white p-4 flex items-center" style={{ height : "9.5vh"}}>
           
           <button
             className=" px-4 py-2 "
@@ -450,7 +486,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
             id="fileInput"
             accept="image/png, image/jpeg, image/jpg, video/mp4, video/mov, video/mwv, video/avi"
             style={{ display: "none" }} // 버튼 클릭 시만 보이게 하기 위해 숨김
-            onChange={(e) => setImageName(e.target.files[0])}
+            //onChange={(e) => setImageName(e.target.files[0])}
+            onChange={fileChange}
             //onChange={(e) => setImageName(e.target.value)}
             // 파일 선택 시 호출될 이벤트 핸들러{/* onChange=handleFileChange*/}
           />
@@ -463,6 +500,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
             className="flex-1 border rounded-full px-4 py-2 focus:outline-none"
             value={msg}
             onChange={(e) => setMsg(e.target.value)}
+            disabled={isInputDisabled}
           />
           <button onClick={sendMsg} className="bg-blue-500 text-white rounded-full p-2 ml-2 hover:bg-blue-600 focus:outline-none">
             <svg
@@ -493,7 +531,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
         </div>
         ):
         (
-          <div className=" bg-gray-200 p-4 flex items-center">
+        <div className=" bg-gray-200 p-4 flex items-center" style={{ height : "9.5vh"}}>
           
           <button disabled 
             className=" px-4 py-2 bg-gray-300 "

@@ -19,7 +19,6 @@ const ChatSearch = ({onRoomSelect}) => {
         if(searchUserName) {
             //axios.get('http://localhost:3001/api/searchChatRoom', {
             axios.get('https://placehere.store/api/searchChatRoom', {
-            
                 params: { data:  userName}  
             })
             .then((response) => {
@@ -37,19 +36,19 @@ const ChatSearch = ({onRoomSelect}) => {
     };    
 
     const searchUserNameChange = (e) => {
-        setSearchUserName(e.target.value);  // input 값 업데이트
+        setSearchUserName(e.target.value);  
     }
 
     return (
-        <CDBContainer style={{width: "25rem", margin:'0', padding:'0' , borderColor:'#A6A6A6'}}>
-            <CDBListGroup style={{margin:'0', padding:'0', width: "25rem", borderRadius: '0' }}>
+        <CDBContainer style={{width: "25rem", margin:'0', padding:'0' }}>
+            <CDBListGroup style={{margin:'0', padding:'0', width: "25rem", borderRadius: '0', border:'0px' }}>
                 {/* 채팅 검색(상대방 userName으로 검색) */}
-                <CDBListGroupItem style={{ height: "7rem" , borderColor:'#A6A6A6'}}>
+                <CDBListGroupItem style={{ height: "7rem" , borderBottom:'1px solid #A6A6A6'}}>
                     <div class=" ">
                         <div class="input-group " style={{marginTop:'7%'}}>
-                            <input type="text" class="form-control searchUserName" onChange={searchUserNameChange}/>
+                            <input type="text" class="form-control searchUserName" onChange={searchUserNameChange}  style={{ borderColor:'#A6A6A6',  borderRadius: '7px' }}/>
                             <div class="input-group-append">
-                                <button className="btn btn-primary" onClick={searchButtonClick}>
+                            <button className="btn " onClick={searchButtonClick} >
                                     <i className="fas fa-search"></i>
                                 </button>
                             </div>
@@ -62,13 +61,14 @@ const ChatSearch = ({onRoomSelect}) => {
                     width: "25rem", 
                     borderRadius: '0', 
                     overflowY: "auto", 
-                    maxHeight: "74vh"
+                    maxHeight: "68vh",
+                    border:"0"
                 }}
             >
                 <div className="flex-1" style={{ overflowY: "auto" }}></div>            
             {
             searchRoom.length === 0 ? (
-                    <CDBListGroupItem style={{ textAlign: 'center', height: "85vh", borderColor:'#A6A6A6'}}>
+                    <CDBListGroupItem style={{ textAlign: 'center', height: "67vh", border:'0px'}}>
                         <p style={{verticalAlign: 'middle', marginTop:'50%'}}><b>검색한 회원과의 채팅한 내역이 없습니다.</b></p>
                     </CDBListGroupItem>                                            
             ) : (

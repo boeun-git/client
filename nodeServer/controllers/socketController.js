@@ -55,10 +55,12 @@ const setupSocket  =  (socketIo) => {
         //chatUsers : 보낸 회원 제외한 사용자
         socket.on('sendMsg', (roomId, msg, sendUser, room_type, msg_type, chatUsers) => {
             let today = new Date();
+
             console.log('socket sendMsg : ', roomId, msg, sendUser, room_type, chatUsers);
             //socket.emit('sendMsg', roomId, msg);
             // roomId로 서버에서 메세지 보내기
-            io.to(roomId).emit('receiveMessage', roomId, msg, sendUser, msg_type, today.toLocaleString());
+            io.to(roomId).emit('receiveMessage', roomId, msg, sendUser, msg_type, today.toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }));
+            console.log('roomId', roomId);
             io.to(roomId).emit('receive');
             console.log('socket receiveMessage : ', roomId, msg, sendUser);
             console.log('socket receiveMessage users : ', users);
@@ -91,66 +93,64 @@ const setupSocket  =  (socketIo) => {
         
         });
 
-    socket.on('image', (roomId, imgBuffer, sendUser, room_type, msg_type, chatUsers, imageName) => {
+        socket.on('image', (roomId, imgBuffer, sendUser, room_type, msg_type, chatUsers, imageName) => {
 
-        if (imgBuffer) {
-            const s3 = new S3Client({
-                region: process.env.AWS_REGION,  
-                credentials: {
-                    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-                    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-                },
-            });    
+            if (imgBuffer) {
+                const s3 = new S3Client({
+                    region: process.env.AWS_REGION,  
+                    credentials: {
+                        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+                    },
+                });    
             
-            console.log('fileName : ', imageName);
+                console.log('fileName : ', imageName);
 
-            const fileName = Math.floor(Math.random() * 1000).toString() + Date.now()  + '.' +  imageName.split('.').pop();  // 확장자 .jpg 고정 (필요시 확장자 동적 변경 가능)
-            const folderPath = 'chat/'; // S3 내 저장할 폴더 설정 (예: chat/폴더에 저장)
+                const fileName = Math.floor(Math.random() * 1000).toString() + Date.now()  + '.' +  imageName.split('.').pop();  // 확장자 .jpg 고정 (필요시 확장자 동적 변경 가능)
+                const folderPath = 'chat/'; 
     
-            const uploadParams = {
-                Bucket: process.env.AWS_BUCKET,   // 사용하려는 S3 버킷명
-                Key: `${folderPath}${fileName}`,  // 폴더명/파일명 설정
-                Body: imgBuffer,  // 이미지 데이터를 Buffer로 받음
-            };
+                const uploadParams = {
+                    Bucket: process.env.AWS_BUCKET,   
+                    Key: `${folderPath}${fileName}`,  
+                    Body: imgBuffer, 
+                };
     
-            // S3에 이미지 업로드
-            s3.send(new PutObjectCommand(uploadParams))
-                .then(() => {
-                    // 업로드가 성공한 후 이미지 URL 생성 (공개 권한을 설정한 경우)
-                    const imageUrl = `https://${process.env.AWS_BUCKET}.s3.amazonaws.com/${folderPath}${fileName}`;
-    
-                    let today = new Date();
-                    io.to(roomId).emit('receiveimage', roomId, imageUrl, sendUser, room_type, msg_type, chatUsers, today.toLocaleString());
-                    io.to(roomId).emit('receive');
-                    console.log('S3 이미지 업로드 :', imageUrl);
+                // S3에 이미지 업로드
+                s3.send(new PutObjectCommand(uploadParams))
+                    .then(() => {
 
-                    let receiveData = {};
+                        const imageUrl = `https://${process.env.AWS_BUCKET}.s3.amazonaws.com/${folderPath}${fileName}`;
+        
+                        let today = new Date();
+                        io.to(roomId).emit('receiveimage', roomId, imageUrl, sendUser, room_type, msg_type, chatUsers, today.toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }));
+                        io.to(roomId).emit('receive');
+                        console.log('S3 이미지 업로드 :', imageUrl);
 
-                    if(room_type === 0){
-                        chatUsers.forEach(user => {
-                            receiveData[user] = { receive_chk: "N" };  
-                        });
-                    }else{
-                        receiveData[chatUsers[0]] = { receive_chk: "N" };
-                    }
-                    
-                    const newMessage = {
-                        room_id: roomId,
-                        msg: fileName,
-                        msg_type: msg_type,
-                        sender_id: sendUser,
-                        receive: receiveData
-                    };
-                    console.log("msg : ", newMessage);
-                    msgService.addMsg(newMessage);                    
-                })
-                .catch((err) => {
-                    console.error('S3 이미지 업로드 :', err);
-                });
-        }
-    });
-    
+                        let receiveData = {};
 
+                        if(room_type === 0){
+                            chatUsers.forEach(user => {
+                                receiveData[user] = { receive_chk: "N" };  
+                            });
+                        }else{
+                            receiveData[chatUsers[0]] = { receive_chk: "N" };
+                        }
+                        
+                        const newMessage = {
+                            room_id: roomId,
+                            msg: fileName,
+                            msg_type: msg_type,
+                            sender_id: sendUser,
+                            receive: receiveData
+                        };
+                        console.log("msg : ", newMessage);
+                        msgService.addMsg(newMessage);                    
+                    })
+                    .catch((err) => {
+                        console.error('S3 이미지 업로드 :', err);
+                    });
+            }
+        });
 
 
         //연결해제될때 user에서도 삭제

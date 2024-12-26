@@ -153,7 +153,7 @@
 
   
   .head {
-    height: 140px;
+    height: 109px;
     margin: 0;
     /*border: 1px solid black;*/
     
@@ -161,7 +161,7 @@
 
   .chat-container {
     min-height: 100%;
-    margin: -100px 0 -1px;
+    margin: -109px 0 ;
   
     flex: 1; /* 남은 공간을 차지 */
     box-sizing: border-box;
