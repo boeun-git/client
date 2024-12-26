@@ -5,8 +5,8 @@ import Cookies from 'js-cookie'
 
 // 기본 REST Provider
 // https://placehere.store/
-const dataProvider = simpleRestProvider("http://localhost:8080/api-admin"); 
-// const dataProvider = simpleRestProvider("https://placehere.store/api-admin"); 
+// const dataProvider = simpleRestProvider("http://localhost:8080/api-admin"); 
+const dataProvider = simpleRestProvider("https://placehere.store/api-admin"); 
 
 // JWT 토큰을 가져와서 Authorization 헤더에 포함시키는 함수
 const getAuthHeaders = () => {
@@ -35,8 +35,8 @@ const CustomDataProvider = {
         console.log(resource);
         console.log(params);
 
-        const url = `http://localhost:8080/api-admin/getUserList`;
-        // const url = `https://placehere.store/api-admin/getUserList`;
+        // const url = `http://localhost:8080/api-admin/getUserList`;
+        const url = `https://placehere.store/api-admin/getUserList`;
         
         const header = getAuthHeaders();
         console.log('header :: ', header);
@@ -73,8 +73,8 @@ const CustomDataProvider = {
         console.log(resource);
         console.log(params);
 
-        const url = `http://localhost:8080/api-admin/getStoreList`;
-        // const url = `https://placehere.store/api-admin/getStoreList`;
+        // const url = `http://localhost:8080/api-admin/getStoreList`;
+        const url = `https://placehere.store/api-admin/getStoreList`;
 
         const header = getAuthHeaders();
         console.log('header :: ', header);
@@ -109,8 +109,8 @@ const CustomDataProvider = {
 
     console.log(resource);
 
-      const url = `http://localhost:8080/api-admin/getRsrvList`;
-    // const url = `https://placehere.store/api-admin/getRsrvList`;
+    //   const url = `http://localhost:8080/api-admin/getRsrvList`;
+    const url = `https://placehere.store/api-admin/getRsrvList`;
 
     console.log("url chk :: " + url);
 
@@ -176,8 +176,8 @@ const CustomDataProvider = {
         console.log(resource);
         console.log(params);
 
-        const url = `http://localhost:8080/api-admin/getBatchList`;
-        // const url = `https://placehere.store/api-admin/getUserList`;
+        // const url = `http://localhost:8080/api-admin/getBatchList`;
+        const url = `https://placehere.store/api-admin/getUserList`;
 
         
         console.log(url);   // http://localhost:8080/api-admin/getBatchList
@@ -232,8 +232,8 @@ const CustomDataProvider = {
         console.log("resource :: ", resource);
         console.log("params :: ", params);
   
-        const url = `http://localhost:8080/api-admin/getUser?id=${params.id}`;
-        // const url = `https://placehere.store/api-admin/getUser?id=${params.id}`;
+        // const url = `http://localhost:8080/api-admin/getUser?id=${params.id}`;
+        const url = `https://placehere.store/api-admin/getUser?id=${params.id}`;
   
   
         return axios
@@ -258,8 +258,8 @@ const CustomDataProvider = {
       console.log("resource :: ", resource);
       console.log("params :: ", params);
 
-      const url = `http://localhost:8080/api-admin/getUser?id=${params.id}`;
-    //   const url = `https://placehere.store/api-admin/getUser?id=${params.id}`;
+    //   const url = `http://localhost:8080/api-admin/getUser?id=${params.id}`;
+      const url = `https://placehere.store/api-admin/getUser?id=${params.id}`;
 
 
       return axios
@@ -284,8 +284,8 @@ const CustomDataProvider = {
       console.log("resource :: ", resource);
       console.log("params :: ", params);
 
-      const url = `http://localhost:8080/api-admin/getRsrv?rsrvNo=${params.id}`;
-    //   const url = `https://placehere.store/api-admin/getRsrv?rsrvNo=${params.id}`;
+    //   const url = `http://localhost:8080/api-admin/getRsrv?rsrvNo=${params.id}`;
+      const url = `https://placehere.store/api-admin/getRsrv?rsrvNo=${params.id}`;
 
 
       return axios
