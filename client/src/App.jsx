@@ -10,6 +10,8 @@ import { RsrvList } from './pages/Admin/RsrvList';
 import { GetRsrv } from './pages/Admin/GetRsrv';
 import Chat from './pages/Chat/Chat';
 import { BatchList } from './pages/Admin/BatchList';
+import CustomLogin from './pages/Admin/CustomLogin.jsx';
+import authProvider from './components/admin/authProvider.js';
 
 const App = () => (
 
@@ -20,7 +22,11 @@ const App = () => (
       <Route
         path="/*"
         element={
-          <Admin dataProvider={CustomDataProvider}>
+          <Admin 
+            dataProvider={CustomDataProvider}
+            authProvider={authProvider}
+            loginPage={CustomLogin}
+          >
             <Resource 
               name="getUserList" 
               list={UserList} 

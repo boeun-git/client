@@ -1,11 +1,21 @@
 // src/customDataProvider.js
 import axios from "axios";
 import simpleRestProvider from "ra-data-simple-rest";
+import Cookies from 'js-cookie'
 
 // 기본 REST Provider
 // https://placehere.store/
-// const dataProvider = simpleRestProvider("http://localhost:8080/api-admin"); 
-const dataProvider = simpleRestProvider("https://placehere.store/api-admin"); 
+const dataProvider = simpleRestProvider("http://localhost:8080/api-admin"); 
+// const dataProvider = simpleRestProvider("https://placehere.store/api-admin"); 
+
+// JWT 토큰을 가져와서 Authorization 헤더에 포함시키는 함수
+const getAuthHeaders = () => {
+    // const token = localStorage.getItem("accessToken");
+    const token = Cookies.get("accessToken");
+    console.log('넘어온 토큰 확인 :: ', token);
+    // return token ? { Authorization: `Bearer ${token}` } : {};
+    return token ? { Authorization: `${token}` } : {};
+};
 
 // 확장된 customDataProvider
 const CustomDataProvider = {
@@ -25,9 +35,11 @@ const CustomDataProvider = {
         console.log(resource);
         console.log(params);
 
-        // const url = `http://localhost:8080/api-admin/getUserList`;
-        const url = `https://placehere.store/api-admin/getUserList`;
+        const url = `http://localhost:8080/api-admin/getUserList`;
+        // const url = `https://placehere.store/api-admin/getUserList`;
         
+        const header = getAuthHeaders();
+        console.log('header :: ', header);
 
         return axios.get(url, {
             params: {
@@ -35,6 +47,7 @@ const CustomDataProvider = {
                 perPage: perPage,
                 username: username
             },
+            headers: header,
         }
 
         )
@@ -60,8 +73,11 @@ const CustomDataProvider = {
         console.log(resource);
         console.log(params);
 
-        // const url = `http://localhost:8080/api-admin/getStoreList`;
-        const url = `https://placehere.store/api-admin/getStoreList`;
+        const url = `http://localhost:8080/api-admin/getStoreList`;
+        // const url = `https://placehere.store/api-admin/getStoreList`;
+
+        const header = getAuthHeaders();
+        console.log('header :: ', header);
 
         return axios.get(url, {
 
@@ -70,6 +86,7 @@ const CustomDataProvider = {
                 perPage: perPage,
                 username: username
             },
+            headers: header,
         })
             .then((response) => {
                 const data = response.data;
@@ -90,12 +107,15 @@ const CustomDataProvider = {
     // 예약 리스트
     if (resource === "getRsrvList") {
 
-      console.log(resource);
+    console.log(resource);
 
-    //   const url = `http://localhost:8080/api-admin/getRsrvList`;
-      const url = `https://placehere.store/api-admin/getRsrvList`;
+      const url = `http://localhost:8080/api-admin/getRsrvList`;
+    // const url = `https://placehere.store/api-admin/getRsrvList`;
 
-      console.log("url chk :: " + url);
+    console.log("url chk :: " + url);
+
+    const header = getAuthHeaders();
+    console.log('header :: ', header);
 
       // 페이지 정보
       console.log("react-admin에서 전달받은 페이지 정보 : ", params.pagination);
@@ -108,6 +128,7 @@ const CustomDataProvider = {
             perPage: perPage,
             username: username
         },
+        headers: header,
       })
           .then((response) => {
               const data = response.data;
@@ -155,18 +176,16 @@ const CustomDataProvider = {
         console.log(resource);
         console.log(params);
 
-        // const url = `http://localhost:8080/api-admin/getBatchList`;
-        const url = `https://placehere.store/api-admin/getUserList`;
+        const url = `http://localhost:8080/api-admin/getBatchList`;
+        // const url = `https://placehere.store/api-admin/getUserList`;
         
         console.log(url);   // http://localhost:8080/api-admin/getBatchList
-        
+        const header = getAuthHeaders();
+        console.log('header :: ', header);
 
-        // React-admin에서 전달받은 페이지 정보
-        console.log("react-admin에서 전달받은 페이지 정보 : ", params);
-
-        // const { page, perPage } = params.pagination;
+        // 페이지 정보
+        console.log("react-admin에서 전달받은 페이지 정보 : ", params.pagination);
         console.log(`React-admin에서 전달받은 페이지 정보: ${url}?page=${page}&perPage=${perPage}`);
-
 
         return axios.get(url, {
 
@@ -175,6 +194,7 @@ const CustomDataProvider = {
                 perPage: perPage,
                 batchName: batchName
             },
+            headers: header,
         })
 
             .then((response) => {
@@ -202,14 +222,17 @@ const CustomDataProvider = {
     console.log('resource - getOne ', resource);
     console.log('params - getOne ', params);
 
+    const header = getAuthHeaders();
+    console.log('header :: ', header);
+
     // 일반회원 리스트
     if (resource === "getUserList") {
 
         console.log("resource :: ", resource);
         console.log("params :: ", params);
   
-        // const url = `http://localhost:8080/api-admin/getUser?id=${params.id}`;
-        const url = `https://placehere.store/api-admin/getUser?id=${params.id}`;
+        const url = `http://localhost:8080/api-admin/getUser?id=${params.id}`;
+        // const url = `https://placehere.store/api-admin/getUser?id=${params.id}`;
   
   
         return axios
@@ -234,8 +257,8 @@ const CustomDataProvider = {
       console.log("resource :: ", resource);
       console.log("params :: ", params);
 
-    //   const url = `http://localhost:8080/api-admin/getUser?id=${params.id}`;
-      const url = `https://placehere.store/api-admin/getUser?id=${params.id}`;
+      const url = `http://localhost:8080/api-admin/getUser?id=${params.id}`;
+    //   const url = `https://placehere.store/api-admin/getUser?id=${params.id}`;
 
 
       return axios
@@ -260,12 +283,14 @@ const CustomDataProvider = {
       console.log("resource :: ", resource);
       console.log("params :: ", params);
 
-    //   const url = `http://localhost:8080/api-admin/getRsrv?rsrvNo=${params.id}`;
-      const url = `https://placehere.store/api-admin/getRsrv?rsrvNo=${params.id}`;
+      const url = `http://localhost:8080/api-admin/getRsrv?rsrvNo=${params.id}`;
+    //   const url = `https://placehere.store/api-admin/getRsrv?rsrvNo=${params.id}`;
 
 
       return axios
-            .get(url)
+            .get(url, {
+                headers: header,
+            })
             .then((response) => {
                 const data = response.data;
                 console.log("getRsrv Data :: ", data);
