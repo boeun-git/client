@@ -6,7 +6,7 @@ const msgService = require('../services/msgService');
 require('dotenv').config();
 const { S3Client, PutObjectCommand  } = require('@aws-sdk/client-s3');
 
-const setupSocket  =  (socketIo) => {
+const socketOn  =  (socketIo) => {
 
     io = socketIo
 
@@ -282,7 +282,7 @@ const sendMsgGroup = (roomId, sendUserName, msg) => {
 }
 
 module.exports = { 
-    setupSocket, 
+    socketOn, 
     SingleJoinRoom, 
     groupJoinRoom, 
     insertUserName, 

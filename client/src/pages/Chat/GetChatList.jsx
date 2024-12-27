@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { CDBListGroup, CDBListGroupItem, CDBBadge, CDBContainer } from "cdbreact";
-import './List.css';
+import '../../style/chat/List.css';
 import Stack from "react-bootstrap/esm/Stack";
-import { useSocket } from "../Socket";
+import { useSocket } from "./Socket";
 
 const ChatList = ({ onRoomSelect }) => {
     const [chatRooms, setChatRooms] = useState([]);
@@ -13,8 +13,8 @@ const ChatList = ({ onRoomSelect }) => {
 
     // 채팅방 목록을 불러오는 함수
     const refreshChatRoom = () => {    
+        axios.get('/api/getChatRoomList', {
         //axios.get('http://localhost:3001/api/getChatRoomList', {
-        axios.get('https://placehere.store/api/getChatRoomList', {
             params: { data: userName }
         })
         .then((response) => {
@@ -67,7 +67,7 @@ const ChatList = ({ onRoomSelect }) => {
                             </CDBListGroupItem>
                         ) : (
                             chatRooms.map((room, index) => {
-                                const lastMessage = room.msg;
+                                const lastMsg = room.msg;
                                 const receiveChk = room.receiveChk;
 
                                 const chatUsers = room.userName
@@ -78,11 +78,11 @@ const ChatList = ({ onRoomSelect }) => {
                                 .filter(user => user.userName !== userName) // userName을 제외
                                 .map(user=> user.user_type === 'ROLE_STORE' ? user.storeName : '');
 
-                                const chatUserType = room.userName
+                                const role = room.userName
                                 .filter(user => user.userName !== userName)
                                 .map(user => user.user_type);
 
-                                console.log('chatUserType', chatUserType);
+                                console.log('chatUserType', role);
                                 return (
                                     <CDBListGroupItem 
                                         hover 
@@ -90,7 +90,7 @@ const ChatList = ({ onRoomSelect }) => {
                                         style={{ margin: 0, padding: 0, height: "7rem" ,  border: "0 0 1px 0"}} 
                                         key={index} 
                                         onClick={() => {
-                                            onRoomSelect(room.id, chatUsers, room.chatType, chatUserType, storeName);
+                                            onRoomSelect(room.id, chatUsers, room.chatType, role, storeName);
                                             // alert(room.id);
                                             // alert(chatUsers);
                                             // alert(room.chatType );
@@ -102,9 +102,9 @@ const ChatList = ({ onRoomSelect }) => {
                                         <Stack style={{ margin: '10px' }}>
                                             <input type="text" value={room.userName.filter(name => name.userName !== userName).map(user=> user.user_type === 'ROLE_STORE' ? `${user.storeName} (${user.userName})` : user.userName)} style={{border : '0px', fontWeight: 'bold', background: "white" }} hover disabled/>
                                             <br />
-                                            {lastMessage}
+                                            {lastMsg}
                                         </Stack>
-                                        {room.receiveChk === 'N' && (
+                                        {receiveChk === 'N' && (
                                         <div style={{ display: 'flex', alignItems: 'center', marginRight:'1em'}}>
                                             <CDBBadge color="danger" size="small" borderType="pill" >
                                             &nbsp;&nbsp;&nbsp;&nbsp;

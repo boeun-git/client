@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
-import ChatSpinner from './Component/Spinner';
+import ChatSpinner from './Spinner';
 
 const SocketContext = createContext();
 export const SocketProvider = ({ children, userName }) => {

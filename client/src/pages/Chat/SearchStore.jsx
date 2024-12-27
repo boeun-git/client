@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CDBListGroup, CDBListGroupItem, CDBContainer } from "cdbreact";
 import axios from "axios";
-import './List.css';
+import '../../style/chat/List.css';
 import Stack from "react-bootstrap/esm/Stack";
 
 const StoreSearch = ({getStoreName}) => {
@@ -12,9 +12,8 @@ const StoreSearch = ({getStoreName}) => {
     const userName = searchStore;
     const searchButtonClick = () => {
         if(searchStore) {
-            //axios.get('http://localhost:8080/api-store/getStoreList', {
-            axios.get('https://placehere.store/api-store/getStoreList', {
-            
+            axios.get('/api-store/getStoreList', {
+            //axios.get('http://localhost:8080/api-store/getStoreList', {            
                 params: {
                     searchKeyword: userName  // 서버가 받는 파라미터를 확인하고 보내는 형식이 맞는지 체크
                 }
@@ -57,7 +56,7 @@ const StoreSearch = ({getStoreName}) => {
                     width: "25rem", 
                     borderRadius: '0', 
                     overflowY: "auto", 
-                    maxHeight: "68vh",
+                    maxHeight: "75vh",
                     border:"0"
                 }}
             >

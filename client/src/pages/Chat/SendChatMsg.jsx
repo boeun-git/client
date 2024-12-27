@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./sendmsg.css";
-import { useSocket } from "../Socket";
+import "../../style/chat/sendmsg.css";
+import { useSocket } from "./Socket";
 import axios from "axios";
+import ChatSpinner from "./Spinner";
 
 const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
   console.log("ROOMID : ", roomId);
@@ -15,7 +16,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
   // const [userName, setUserName] = useState('');
   const [chatUserName, setChatUserName] = useState([]);
   const [chatUserNames, setChatUserNames] = useState([]);  
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState(null);
   const [imageName, setImageName] = useState(null);
   const [receiveMsg, setReceiveMsg] = useState([]);
   const [receiveImg, setReceiveImg] = useState(null);
@@ -25,8 +26,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
   const [msgType, setMsgType] = useState([]);
   const [onoff, setOnoff] = useState([]);
   const [post, setPost] = useState("");
-  const [preTime, setPreTime] = useState([]);  
-  const [time, setTime] = useState([]);  
+  const [preMsgDt, setPreMsgDt] = useState([]);  
+  const [msgDt, setMsgDt] = useState([]);  
   const [isInputDisabled, setIsInputDisabled] = useState(false);
 
   const [sendRoomId, setSendRoomId] = useState("");
@@ -44,8 +45,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
 
     if (sendRoomId !== null && sendRoomId.length > 1){
                 axios
+                .get("/api/getChatMsg", {
                 //.get("http://localhost:3001/api/getChatMsg", {
-                .get("https://placehere.store/api/getChatMsg", {
                 // URL 파라미터로 userId3을 전달 나중에 userName으로 수정
                 params: { roomId: sendRoomId, userName: userName},
                 })
@@ -57,8 +58,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
                 const msgTypes = response.data.data.map((item) => item.msg_type);
                 setPreMsgType(msgTypes);
 
-                const msgTime = response.data.data.map((item) => item.msg_dt);
-                setPreTime(msgTime);
+                const msgDt = response.data.data.map((item) => item.msg_dt);
+                setPreMsgDt(msgDt);
         
                 console.log("response : ", response);
                 console.log("response.data : ", response.data);
@@ -82,11 +83,12 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
     console.log("send roomId", roomId);
     //console.log("send roomId", roomId.length);
     // API 요청
-    if ( roomId != null && roomId.length > 1){
+    if ( roomId !== null && roomId.length > 1){
         console.log("notnull sendRoomId : ", sendRoomId);
       axios
+        .get("/api/getChatMsg", {
         //.get("http://localhost:3001/api/getChatMsg", {
-        .get("https://placehere.store/api/getChatMsg", {
+          //params: { roomId: roomId, userName: userName},
           params: { roomId: roomId, userName: userName},
         })
         .then((response) => {
@@ -96,8 +98,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
           
           const msgTypes = response.data.data.map((item) => item.msg_type);
           setPreMsgType(msgTypes);
-          const msgTime = response.data.data.map((item) => item.msg_dt);
-          setPreTime(msgTime);
+          const msgDt = response.data.data.map((item) => item.msg_dt);
+          setPreMsgDt(msgDt);
 
           console.log("response : ", response);
           console.log("response.data : ", response.data);
@@ -124,8 +126,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
         storeName = storeName[0] ;
       }
 
+      axios.post('/api/addChatRoom', {
     //axios.post('http://localhost:3001/api/addChatRoom', {
-      axios.post('https://placehere.store/api/addChatRoom', {
           //userName, 채팅할 회원 아이디
           //chat_user: [userName, users],
           chat_user: [
@@ -151,12 +153,20 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
         if (response.data.data._id) {
             setSendRoomId(response.data.data._id);
             console.log('Found _id:', response.data.data._id);
+
+            if(sendRoomId === null){
+              return <ChatSpinner/>
+            }            
         } 
         // response.data.data.data[0]._id가 존재하는 경우 처리
         else if (response.data.data[0]._id) {
             //roomId = response.data.data[0]._id.toString();
             setSendRoomId(response.data.data[0]._id);
-            console.log('Found _id in data array:', sendRoomId);
+            console.log('Found _id in data array:', response.data.data[0]._id);
+
+            if(sendRoomId === null){
+              return <ChatSpinner/>
+            }            
         } 
         else {
             // 두 조건에 해당하지 않는 경우 처리
@@ -174,9 +184,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
     }else{
       console.log('type 0 - users : ' , users);
       
-      
+      axios.post('/api/addChatRoom', {
       //axios.post('http://localhost:3001/api/addChatRoom', {
-      axios.post('https://placehere.store/api/addChatRoom', {
           //나중에 userName, 채팅할 회원 아이디로 수정
           chat_user: [userName, ...users],
           //chat_user: ['userId1', 'userId3'],
@@ -190,6 +199,10 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
           console.log('group addChatRoom.js response.data.data._id: ', response.data.data._id);
           //const roomId = response.data.data.data._id; // _id 추출
           setSendRoomId(response.data.data.data._id); // _id 추출
+
+          if(sendRoomId === null){
+            return <ChatSpinner/>
+          }
 
       })
       .catch((error) => {
@@ -225,15 +238,14 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
           setReceiveMsg((prevMsg) => [...prevMsg, msg]);
           setMsgType((preMsgType) => [...preMsgType, msg_type]);
 
-          setTime((preTime) => [...preTime, msg_time]);
-          console.log("receiveMsg preTime:", preTime);
+          setMsgDt((preMsgDt) => [...preMsgDt, msg_time]);
+          console.log("receiveMsg preMsgDt:", preMsgDt);
           console.log("receiveMsg msg_time:", msg_time);
-          console.log("receiveMsg time:", time);
+          console.log("receiveMsg msgDt:", msgDt);
             console.log("receiveMsg Received message:", receiveMsg);
           
-
+            axios.get("/api/chkMsg", {
             //axios.get("http://localhost:3001/api/chkMsg", {
-            axios.get("https://placehere.store/api/chkMsg", {
                 params: { roomId: room, userName: userName},
             })
             .then((response) => {
@@ -257,11 +269,10 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
             setReceiveImg(msg);
             setMsgType((preMsgType) => [...preMsgType, msg_type]);
               
-            setTime((preTime) => [...preTime, msg_time]);
-
-            axios.get("http://localhost:3001/api/chkMsg", {
-            //axios.get("https://placehere.store/api/chkMsg", {
-                // URL 파라미터로 userId3을 전달 나중에 userName으로 수정
+            setMsgDt((preMsgDt) => [...preMsgDt, msg_time]);
+            
+            axios.get("/api/chkMsg", {
+            //axios.get("http://localhost:3001/api/chkMsg", {
                 params: { roomId: room, userName: userName},
             })
             .then((response) => {
@@ -275,7 +286,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
 
         });
     //}
-}, [sendRoomId, roomId]);  // socket이 변경될 때마다 이벤트를 등록하도록 의존성 배열 추가
+  }, []);  // socket이 변경될 때마다 이벤트를 등록하도록 의존성 배열 추가    
+//}, [sendRoomId, roomId]);  // socket이 변경될 때마다 이벤트를 등록하도록 의존성 배열 추가
 
 // receiveMsg 값이 변경될 때마다 로그 출력
   useEffect(() => {
@@ -291,10 +303,22 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
 
   const fileChange = (e) =>{
     const file = e.target.files[0];
+    
     setImageName(e.target.files[0]);
     setMsg(file.name);
     setIsInputDisabled(true);
+
+    if(imageName === null) {
+      <ChatSpinner/>
+    }
+    
   }
+  
+  useEffect(() => {
+    if (msg === null) {
+      setMsg('');
+    }
+  }, [msg]);
 
   const sendMsg = () => {
 
@@ -304,6 +328,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
       const imageExtensions = ['png', 'jpeg', 'jpg'];
       const videoExtensions = ['mp4', 'mov', 'mwv', 'avi'];
       let fileType = '';
+
       if (imageExtensions.includes(imgEx)) {
         fileType = 1; // 이미지 파일
       } else if (videoExtensions.includes(imgEx)) {
@@ -312,22 +337,58 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
   
       const reader = new FileReader();
       reader.onload = function(e) {
+
           const imgBuffer = e.target.result;
           const fileName = imageName.name;
-          socket.emit('image', roomId, imgBuffer, userName, type, fileType, users, fileName);
+
+          if (sendRoomId === null  || sendRoomId.length < 0){
+            socket.emit('image', roomId, imgBuffer, userName, type, fileType, users, fileName);
+          }else{
+            socket.emit('image', sendRoomId, imgBuffer, userName, type, fileType, users, fileName);
+          }
+
       };
+
       reader.readAsArrayBuffer(imageName); 
-      //setIsInputDisabled(false);
-      setImageName("");
-      setMsg("");
+      setIsInputDisabled(false); //
+      setImageName(null);
+      setMsg(null);
+
+      if(imageName !== null){
+        return <ChatSpinner/>
+      }
+
+      if( msg !== null){
+        return <ChatSpinner/>
+      }
 
     }else if(msg.length > 0){
 
-      socket.emit("sendMsg", sendRoomId, msg, userName, type, 0, users);
-      console.log("sendMsg: ", sendRoomId, msg, userName, type, 0, users);
-      setMsg("");
+      console.log("sendMsg sendRoomId: ",sendRoomId, " roomId : ", roomId );
+
+      if (sendRoomId === null  || sendRoomId.length < 0){
+        socket.emit("sendMsg", roomId, msg, userName, type, 0, users);
+        console.log("sendMsg roomId: ", roomId, msg, userName, type, 0, users);        
+        
+      }else{
+        socket.emit("sendMsg", sendRoomId, msg, userName, type, 0, users);
+        console.log("sendMsg sendRoomId: ", sendRoomId, msg, userName, type, 0, users);
+      }      
+
+      setImageName(null);
+      setMsg(null);
+
+      if(imageName !== null){
+        return <ChatSpinner/>
+      }
+      
+      if( msg !== null){
+        return <ChatSpinner/>
+      }
 
     }
+
+    
   };
 
   return (
@@ -404,8 +465,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
 
              {receiveMsg.map(
               (msg, index) =>
-                
-              room === sendRoomId && (
+              //(room === sendRoomId) && (
+              (sendRoomId !== null && room === sendRoomId) && (
                 
                   chatUserName[index] === userName ? (
 
@@ -423,7 +484,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
                             </div>
                         </div>
                         <div className="flex justify-end text-xs text-gray-500 mt-1">
-                        ({time[index]})
+                        ({msgDt[index]})
                         </div>
                     </div>
                   ) : (
@@ -444,7 +505,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
                             </div>
                         </div>
                         <div className="flex text-xs text-gray-500 mt-1">
-                        ({time[index]})
+                        ({msgDt[index]})
                         </div>
                     </div>
                   )
@@ -477,8 +538,8 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
             id="fileInput"
             accept="image/png, image/jpeg, image/jpg, video/mp4, video/mov, video/mwv, video/avi"
             style={{ display: "none" }} // 버튼 클릭 시만 보이게 하기 위해 숨김
-            onChange={(e) => setImageName(e.target.files[0])}
-            //onChange={fileChange}
+            //onChange={(e) => setImageName(e.target.files[0])}
+            onChange={fileChange}
             //onChange={(e) => setImageName(e.target.value)}
             // 파일 선택 시 호출될 이벤트 핸들러{/* onChange=handleFileChange*/}
           />
@@ -491,6 +552,7 @@ const SendChatMsg = ({ roomId,  type, users, usersRole, storeName }) => {
             className="flex-1 border rounded-full px-4 py-2 focus:outline-none"
             value={msg}
             onChange={(e) => setMsg(e.target.value)}
+            disabled={isInputDisabled}
             //disabled={isInputDisabled}
           />
           <button onClick={sendMsg} className="bg-blue-500 text-white rounded-full p-2 ml-2 hover:bg-blue-600 focus:outline-none">

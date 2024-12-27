@@ -23,7 +23,7 @@ export const GetStore = (props) => (
                   <td style={styles.td}><DateField source="regDt" /></td>
                 </tr>
                 <tr>
-                  <th style={styles.th}>로그인인시</th>
+                  <th style={styles.th}>로그인일시</th>
                   <td style={styles.td}><DateField source="loginDt" /></td>
                 </tr>
                 

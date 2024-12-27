@@ -1,20 +1,17 @@
 import { useEffect, useState } from 'react';
 import { SocketProvider } from './Socket';
-import ChatRoomList from './Component/ChatList';
-import ChatRoomListBar from './Component/ChatRoomListBar';
-import SendChatMsg from './Component/SendChatMsg';
-//import SendChatMsg from './Component/sendmsg';
-//import SendChatMsg from './Component/sendmsgtest.jsx';
-//import SendChatMsg from './Component/sendsend.jsx';
+import ChatRoomList from './GetChatList.jsx';
+import ChatRoomListBar from './ChatRoomSideBar.jsx';
+import SendChatMsg from './SendChatMsg.jsx';
 import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
 import "../../style/chat/Chat.css";
-import ChatSearch from './Component/ChatSearch';
-import StoreSearch from './Component/StoreSearch';
-import UserSearch from './Component/UserSearch';
-import { useLocation, useNavigate } from 'react-router-dom';
+import ChatSearch from './SearchChat.jsx';
+import StoreSearch from './SearchStore.jsx';
+import UserSearch from './SearchUser.jsx';
+import { useLocation } from 'react-router-dom';
 import Header from '../../Header';
-import ChatSpinner from './Component/Spinner.jsx';
+import ChatSpinner from './Spinner.jsx';
 import axios from 'axios';
 
 const Chat = () => {
@@ -22,8 +19,12 @@ const Chat = () => {
     const queryParams = new URLSearchParams(useLocation().search);
     const name = queryParams.get('name');
     const role = queryParams.get('role') || '';
-    const storeId = queryParams.get('storeId');
+    //const storeId = queryParams.get('storeId');
     const [clickStoreName, setClickStoreName] = useState(null); 
+    const initialStoreId = queryParams.get('storeId');
+    
+    // storeId 상태 관리
+    const [storeId, setStoreId] = useState(initialStoreId);
 
     useEffect(() => {
 
@@ -35,9 +36,10 @@ const Chat = () => {
             setLoginUserRole(sessionUserRole);
             
             //가게상세페이지에서 채팅으로 넘어왔을 때
-            if(storeId !== null && storeId.length > 0){
+            //if(storeId !== null && storeId.length > 0){
+            if(storeId !== null){
+                axios.get('/api-store/getStore',{
                 //axios.get('http://localhost:8080/api-store/getStore',{
-                axios.get('https://placehere.store/api-store/getStore', {
                     params: { storeId:  storeId}  
                 })
                 .then((response) => {
@@ -58,8 +60,8 @@ const Chat = () => {
             
             if (!sessionUserName || sessionUserName === null) {
                 //값이 없으면 홈페이지로
-                //window.location.href = "http://localhost:8080/"; https://placehere.store/
-                window.location.href = "https://placehere.store/";
+                //window.location.href = "http://localhost:8080/"; 
+                window.location.href = "/";
                 
             }
             
@@ -67,9 +69,6 @@ const Chat = () => {
     
         initUser();
     }, []);
-
-
-
 
     
 
@@ -102,13 +101,14 @@ const Chat = () => {
 
     // 채팅목록 - 채팅방 선택했을 때 - ChatRoomList,
     const handleRoomSelect = (roomId, users, type, usersType, store) => {
+        setStoreId(null);
         setClickRoomId(roomId);
         setClickRoomUser(users); 
         setClickRoomType(type);
         setClickRoomUserRole(usersType);
         setClickStoreName(store);
         setShowSendChatMsg(true);
-
+        
     };
 
     useEffect(() => { 
@@ -148,6 +148,7 @@ const Chat = () => {
 
         //1초
         setTimeout(() => {
+            setStoreId(null);
             setClickRoomUser(Id);
             setShowSendChatMsg(true);
             setClickRoomId("");
@@ -172,11 +173,11 @@ const Chat = () => {
 
         setTimeout(() => {
             console.log("clickUser getUserName: ", getUserName);
-
+            setStoreId(null);
             setClickRoomUser(getUserName);
             console.log("clickUser clickRoomUser: ", clickRoomUser);
             setClickRoomId("");
-            
+            setClickStoreName();
             if (Array.isArray(getUserName)) {
                 if(getUserName.length === 1){
                     setClickRoomType(1);
@@ -225,7 +226,7 @@ const Chat = () => {
                             <UserSearch getUserName={clickUser}/>}
                         </div>
                         <div style={{ width:'100%', height: '88.5vh', marginTop : '0' , border:'1px solid #A6A6A6', borderTop:'1px solid #4880FF'}}>
-                        {showSendChatMsg === true && (storeId === null || storeId.length === 0)  && 
+                        {showSendChatMsg === true && (storeId === null)  && 
                             <SendChatMsg 
                                 roomId={clickRoomId} 
                                 type={clickRoomType} 

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CDBListGroup, CDBListGroupItem, CDBContainer } from "cdbreact";
 import axios from "axios";
-import './List.css';
+import '../../style/chat/List.css';
 import ChatSpinner from "./Spinner";
 
 const UserSearch = ({getUserName}) => {
@@ -13,17 +13,24 @@ const UserSearch = ({getUserName}) => {
     const userName = searchUser;
     const searchButtonClick = () => {
         if(searchUser) {
+            axios.get('/api-user/getUser', {
             //axios.get('http://localhost:8080/api-user/getUser', {
-            axios.get('https://placehere.store/api-user/getUser', {
                 params: { username:  userName}  
             })
             //axios.get('http://localhost:8080/api-user/getUserList')
             .then((response) => {
-                // 서버로부터 받은 데이터 처리
-                setSearchUserResult(response.data);
-                console.log('getChatRoomUser : ', response.data);
-                //list 결과로 onoff 확인하는 것 추가하기
-                console.log('Array.isArray(searchUserResult) : ', Array.isArray(searchUserResult));
+                // ACTIVE일때만 
+                if(response.data.activeStatus === 'ACTIVE'){
+                    setSearchUserResult(response.data);
+                    console.log('getChatRoomUser : ', response.data);
+                    console.log('activeStatus : ', response.data.activeStatus);
+                    console.log('activeStatus : ', response.data.id);
+                    
+                    console.log('Array.isArray(searchUserResult) : ', Array.isArray(searchUserResult));
+
+                }else{
+                    setSearchUserResult([]);
+                }
             })
             .catch((error) => {
                 setSearchUserResult([]);

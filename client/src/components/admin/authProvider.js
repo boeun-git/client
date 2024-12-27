@@ -13,7 +13,8 @@ const authProvider = {
 
         try {
             // 백엔드 로그인 요청
-            const response = await axios.post(`http://localhost:8080/admin-login?username=${username}&password=${password}`,
+            // const response = await axios.post(`http://localhost:8080/admin-login?username=${username}&password=${password}`,
+            const response = await axios.post(`/admin-login?username=${username}&password=${password}`,
                 {
                     headers: {
                         'Content-Type': 'application/json',

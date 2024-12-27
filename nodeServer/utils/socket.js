@@ -24,6 +24,6 @@ const io = socketIo(httpServer, {
 });
 
 // 소켓 서버 로직 처리 (이 부분을 socketController에 위임)
-socketController.setupSocket(io);
+socketController.socketOn(io);
 
 module.exports = { io, httpServer };

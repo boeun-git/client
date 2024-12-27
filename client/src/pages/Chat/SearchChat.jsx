@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CDBListGroup, CDBListGroupItem, CDBBadge, CDBContainer } from "cdbreact";
 import axios from "axios";
-import './List.css';
+import '../../style/chat/List.css';
 import Stack from "react-bootstrap/esm/Stack";
 
 
@@ -17,8 +17,8 @@ const ChatSearch = ({onRoomSelect}) => {
     const searchButtonClick = () => {
         console.log("chatSearch.jsx userName : ", userName);
         if(searchUserName) {
+            axios.get('/api/searchChatRoom', {
             //axios.get('http://localhost:3001/api/searchChatRoom', {
-            axios.get('https://placehere.store/api/searchChatRoom', {
                 params: { data:  userName}  
             })
             .then((response) => {
